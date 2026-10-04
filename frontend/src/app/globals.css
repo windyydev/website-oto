@@ -1,0 +1,133 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  
+  /* Atelier Curated Automotive colors */
+  --color-bronze: var(--accent-bronze);
+  --color-surface: var(--surface-inset);
+  --color-border-strong: var(--border-strong);
+
+  /* Radius */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+
+  /* Shadows */
+  --shadow-card: 0 8px 30px rgba(18, 19, 22, 0.04);
+}
+
+:root {
+  /* Atelier Curated Automotive Theme */
+  --background: #FBFBFA;
+  --foreground: #121316;
+  
+  --card: #FBFBFA;
+  --card-foreground: #121316;
+  
+  --popover: #FBFBFA;
+  --popover-foreground: #121316;
+  
+  --primary: #121316;
+  --primary-foreground: #FBFBFA;
+  
+  --secondary: #F4F4F2;
+  --secondary-foreground: #121316;
+  
+  --muted: #F4F4F2;
+  --muted-foreground: #66686B;
+  
+  --accent: #F4F4F2;
+  --accent-foreground: #121316;
+  
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #FBFBFA;
+
+  --border: #EAEAE7;
+  --input: #EAEAE7;
+  --ring: #9E7D53;
+  
+  --radius: 4px;
+  
+  /* Custom brand colors */
+  --accent-bronze: #9E7D53;
+  --surface-inset: #F4F4F2;
+  --border-strong: #E2E2DF;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+}
+
+/* Utilities */
+@layer utilities {
+  .text-display-hero {
+    @apply text-[56px] lg:text-[64px] leading-tight font-display font-semibold;
+  }
+  .text-headline-lg {
+    @apply text-[36px] leading-tight font-display font-semibold;
+  }
+  .text-headline-md {
+    @apply text-[24px] leading-snug font-display font-semibold;
+  }
+  .text-headline-sm {
+    @apply text-[18px] leading-snug font-display font-semibold;
+  }
+  .text-body-lg {
+    @apply text-[16px] leading-normal font-sans;
+  }
+  .text-body-md {
+    @apply text-[14px] leading-normal font-sans;
+  }
+  .text-body-sm {
+    @apply text-[12px] leading-normal font-sans;
+  }
+  .text-label-caps {
+    @apply text-[11px] leading-normal font-sans uppercase tracking-[0.08em] font-medium text-bronze;
+  }
+  
+  /* data-mono for numbers */
+  .data-mono {
+    @apply font-sans tabular-nums;
+  }
+}
