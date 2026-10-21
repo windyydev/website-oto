@@ -1,13 +1,19 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.api import api_router
+from app.core.config import settings
 
 app = FastAPI(title="Car Showroom API", description="API for Car Showroom website")
 
-# Bật CORS cho frontend (Next.js)
+# Bật CORS cho frontend
 origins = [
     "http://localhost:3000",
 ]
+
+# Thêm CORS_ORIGINS từ env (dùng khi deploy production)
+if settings.CORS_ORIGINS:
+    extra = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
+    origins.extend(extra)
 
 app.add_middleware(
     CORSMiddleware,

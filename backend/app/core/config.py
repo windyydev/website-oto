@@ -3,6 +3,10 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     DATABASE_URL: str
     
+    # CORS — danh sách URL được phép, cách nhau bởi dấu phẩy
+    # VD: "https://my-app.vercel.app,https://www.mydomain.com"
+    CORS_ORIGINS: str = ""
+
     # Storage Provider: 'cloudinary' or 's3'
     STORAGE_PROVIDER: str = "cloudinary"
     
