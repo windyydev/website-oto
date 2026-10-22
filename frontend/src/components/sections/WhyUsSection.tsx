@@ -4,7 +4,7 @@ const pillars = [
   {
     icon: ShieldCheck,
     tag: "Tiêu chuẩn kỹ thuật",
-    title: "Kiểm Định 150 Điểm Độc Lập",
+    title: "Kiểm Định 160 Điểm Độc Lập",
     description:
       "Nội soi buồng đốt, đo độ dày nước sơn điện tử, quét cảm biến ECU và kiểm tra độ biến dạng vi mô khung gầm. Chỉ những chiếc xe đạt điểm số hoàn hảo mới được đưa vào bộ sưu tập.",
   },

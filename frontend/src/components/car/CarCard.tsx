@@ -4,14 +4,9 @@ import Link from "next/link";
 import { useTestDrive } from "@/context/TestDriveContext";
 import { Gauge, Fuel, Calendar, ArrowUpRight, ShieldCheck } from "lucide-react";
 import { Car } from "@/lib/api";
+import { formatPrice } from "@/lib/utils";
 
-export function formatPrice(price: number) {
-  if (price >= 1_000_000_000) {
-    const b = price / 1_000_000_000;
-    return `${b % 1 === 0 ? b : b.toFixed(2)} tỷ`;
-  }
-  return `${(price / 1_000_000).toFixed(0)} triệu`;
-}
+export { formatPrice };
 
 export default function CarCard({ car }: { car: Car }) {
   const { openModal } = useTestDrive();

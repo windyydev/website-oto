@@ -12,6 +12,10 @@ import {
   Pencil
 } from "lucide-react";
 import { adminApi, Car, Brand } from "@/lib/api";
+import { formatPrice } from "@/lib/utils";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminEmptyState } from "@/components/admin/AdminEmptyState";
+import { CarStatusBadge } from "@/components/admin/StatusBadge";
 
 export default function AdminCarsPage() {
   const [cars, setCars] = useState<Car[]>([]);
@@ -69,39 +73,23 @@ export default function AdminCarsPage() {
     }
   };
 
-  const formatPrice = (price: number) => {
-    if (price >= 1_000_000_000) {
-      return `${(price / 1_000_000_000).toFixed(2)} tỷ`;
-    }
-    return `${(price / 1_000_000).toFixed(0)} triệu`;
-  };
-
   return (
     <div className="space-y-6">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
-        <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-1">
-            <span>BẢNG ĐIỀU KHIỂN</span>
-            <span>•</span>
-            <span className="text-[var(--brand-gold)]">KHO XE SALA</span>
-          </div>
-          <h1 className="font-display text-2xl lg:text-3xl font-semibold tracking-tight text-[var(--text-primary)]">
-            Quản Lý Bộ Sưu Tập Xe
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Hiện có <strong className="text-[var(--text-primary)] font-mono">{total}</strong> mẫu xe đang được trưng bày và phân phối.
-          </p>
-        </div>
-
-        <Link
-          href="/admin/cars/create"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] font-semibold text-xs transition shadow-sm shrink-0 self-start sm:self-auto"
-        >
-          <PlusCircle className="w-4 h-4" />
-          <span>Thêm Xe Mới</span>
-        </Link>
-      </div>
+      <AdminPageHeader
+        breadcrumbs={{ category: "BẢNG ĐIỀU KHIỂN", subCategory: "KHO XE SALA" }}
+        title="Quản Lý Bộ Sưu Tập Xe"
+        description={`Hiện có ${total} mẫu xe đang được trưng bày và phân phối.`}
+        actions={
+          <Link
+            href="/admin/cars/create"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] font-semibold text-xs transition shadow-sm shrink-0 self-start sm:self-auto cursor-pointer"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Thêm Xe Mới</span>
+          </Link>
+        }
+      />
 
       {/* Filter Bar */}
       <div className="p-4 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg flex flex-col md:flex-row gap-3 items-center shadow-xs">
@@ -161,16 +149,19 @@ export default function AdminCarsPage() {
             <span className="text-xs text-[var(--text-muted)]">Đang tải danh sách xe...</span>
           </div>
         ) : cars.length === 0 ? (
-          <div className="py-20 text-center space-y-3">
-            <CarFront className="w-10 h-10 text-[var(--text-muted)] mx-auto" />
-            <p className="text-sm text-[var(--text-muted)]">Không tìm thấy chiếc xe nào phù hợp.</p>
-            <Link
-              href="/admin/cars/create"
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-xs font-semibold rounded-lg hover:opacity-90 transition"
-            >
-              <PlusCircle className="w-3.5 h-3.5" /> Thêm xe đầu tiên
-            </Link>
-          </div>
+          <AdminEmptyState
+            icon={CarFront}
+            title="Không tìm thấy mẫu xe nào phù hợp"
+            description="Thử thay đổi bộ lọc tìm kiếm hoặc thêm mẫu xe mới vào bộ sưu tập Atelier."
+            actions={
+              <Link
+                href="/admin/cars/create"
+                className="inline-flex items-center gap-2 px-3.5 py-2 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-xs font-semibold rounded-lg hover:opacity-90 transition cursor-pointer"
+              >
+                <PlusCircle className="w-3.5 h-3.5" /> Thêm xe đầu tiên
+              </Link>
+            }
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
@@ -251,21 +242,7 @@ export default function AdminCarsPage() {
 
                       {/* Status */}
                       <td className="px-4 py-4">
-                        <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
-                            car.status === "available"
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
-                              : car.status === "reserved"
-                              ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
-                              : "bg-[var(--surface-low)] text-[var(--text-muted)]"
-                          }`}
-                        >
-                          {car.status === "available"
-                            ? "Sẵn sàng"
-                            : car.status === "reserved"
-                            ? "Đã cọc"
-                            : "Đã bán"}
-                        </span>
+                        <CarStatusBadge status={car.status} />
                       </td>
 
                       {/* Actions */}

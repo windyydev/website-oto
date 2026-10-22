@@ -3,19 +3,8 @@
 import { useEffect, useState } from "react";
 import { Tag, Plus, Trash2, AlertCircle } from "lucide-react";
 import { adminApi, Brand } from "@/lib/api";
-
-function slugify(text: string) {
-  return text
-    .toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[đĐ]/g, "d")
-    .replace(/[^a-z0-9 -]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-}
+import { slugify } from "@/lib/utils";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 export default function AdminBrandsPage() {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -90,19 +79,11 @@ export default function AdminBrandsPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
-      <div className="pb-4 border-b border-[var(--border-subtle)]">
-        <div className="flex items-center gap-2 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-1">
-          <span>BẢNG ĐIỀU KHIỂN</span>
-          <span>•</span>
-          <span className="text-[var(--brand-gold)]">DANH MỤC THƯƠNG HIỆU</span>
-        </div>
-        <h1 className="font-display text-2xl lg:text-3xl font-semibold tracking-tight text-[var(--text-primary)]">
-          Quản Lý Thương Hiệu & Hãng Xe
-        </h1>
-        <p className="text-xs text-[var(--text-muted)] mt-1">
-          Khai báo các hãng xe đối tác phân phối chính thức tại Showroom Atelier.
-        </p>
-      </div>
+      <AdminPageHeader
+        breadcrumbs={{ category: "BẢNG ĐIỀU KHIỂN", subCategory: "DANH MỤC THƯƠNG HIỆU" }}
+        title="Quản Lý Thương Hiệu & Hãng Xe"
+        description="Khai báo các hãng xe đối tác phân phối chính thức tại Showroom Atelier."
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Form: Add Brand */}

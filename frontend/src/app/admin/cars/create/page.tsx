@@ -14,19 +14,8 @@ import {
   CarFront
 } from "lucide-react";
 import { adminApi, Brand } from "@/lib/api";
-
-function slugify(text: string) {
-  return text
-    .toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[đĐ]/g, "d")
-    .replace(/[^a-z0-9 -]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-}
+import { slugify } from "@/lib/utils";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 interface SelectedFile {
   file: File;
@@ -215,23 +204,20 @@ export default function CreateCarPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-[var(--border-subtle)]">
-        <div>
+      <AdminPageHeader
+        breadcrumbs={{ category: "KHO XE SALA", subCategory: "ĐĂNG TẢI XE MỚI" }}
+        title="Đăng Tải Xe Mới Vào Showroom"
+        description="Khai báo thông số kỹ thuật và tải lên hình ảnh chất lượng cao lưu trữ tại Cloudinary."
+        actions={
           <Link
             href="/admin/cars"
-            className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition mb-1"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] border border-[var(--border-subtle)] text-[var(--text-primary)] text-xs font-medium rounded-lg transition"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Quay lại Bộ sưu tập</span>
           </Link>
-          <h1 className="font-display text-2xl lg:text-3xl font-semibold tracking-tight text-[var(--text-primary)]">
-            Đăng Tải Xe Mới Vào Showroom
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Khai báo thông số kỹ thuật và tải lên hình ảnh chất lượng cao lưu trữ tại Cloudinary.
-          </p>
-        </div>
-      </div>
+        }
+      />
 
       {error && (
         <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 flex items-center gap-3 text-xs">

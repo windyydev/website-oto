@@ -81,21 +81,24 @@ export default function TestDriveModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-xl bg-zinc-950 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-xl bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col text-[var(--text-primary)]">
+        {/* Top Gold Accent Line */}
+        <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-[var(--brand-gold)] to-transparent" />
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-zinc-800/80">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--border-subtle)]">
           <div>
-            <span className="text-[11px] font-semibold text-amber-500 uppercase tracking-widest block">
+            <span className="text-[10px] font-semibold text-[var(--brand-gold)] uppercase tracking-widest block">
               Trải Nghiệm Độc Bản
             </span>
-            <h3 className="text-xl font-display font-semibold text-white mt-0.5">
+            <h3 className="text-lg font-display font-semibold text-[var(--text-primary)] mt-0.5">
               Đặt Lịch Lái Thử Riêng Tư
             </h3>
           </div>
           <button
             onClick={closeModal}
-            className="p-1.5 rounded-full text-zinc-400 hover:text-white hover:bg-zinc-900 transition"
+            className="p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-low)] transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -104,35 +107,35 @@ export default function TestDriveModal() {
         {/* Content */}
         <div className="p-6 overflow-y-auto flex-1">
           {successCode ? (
-            <div className="py-8 text-center space-y-4">
-              <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-8 h-8" />
+            <div className="py-6 text-center space-y-4">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
-                <h4 className="text-lg font-semibold text-white">Đặt Lịch Lái Thử Thành Công!</h4>
-                <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">
+                <h4 className="text-base font-display font-semibold text-[var(--text-primary)]">Đặt Lịch Lái Thử Thành Công!</h4>
+                <p className="text-xs text-[var(--text-secondary)] mt-1.5 max-w-md mx-auto leading-relaxed">
                   Chuyên viên quản lý trải nghiệm của Atelier sẽ liên hệ với bạn trong vòng 15 phút để xác nhận lộ trình lái thử.
                 </p>
               </div>
 
-              <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800 max-w-xs mx-auto text-center">
-                <span className="text-[10px] text-zinc-500 uppercase tracking-wider block">Mã Xác Nhận Đặt Lịch</span>
-                <span className="text-xl font-mono font-bold text-amber-400 mt-1 block">
+              <div className="p-3.5 bg-[var(--surface-low)] rounded-xl border border-[var(--border-subtle)] max-w-xs mx-auto text-center">
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Mã Xác Nhận Đặt Lịch</span>
+                <span className="text-lg font-mono font-bold text-[var(--brand-gold)] mt-0.5 block">
                   {successCode}
                 </span>
               </div>
 
               <button
                 onClick={closeModal}
-                className="mt-4 px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-black text-sm font-semibold rounded-lg transition"
+                className="mt-3 px-6 py-2 bg-[var(--brand-gold)] hover:bg-[#8A6C44] text-[#0B0C0E] text-xs uppercase tracking-wider font-semibold rounded-lg transition cursor-pointer"
               >
                 Đóng Cửa Sổ
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-400 flex items-center gap-2">
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-500 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   <span>{error}</span>
                 </div>
@@ -140,12 +143,12 @@ export default function TestDriveModal() {
 
               {/* Mẫu xe */}
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300 flex items-center gap-1.5">
-                  <CarFront className="w-3.5 h-3.5 text-amber-400" />
-                  Mẫu xe bạn muốn trải nghiệm <span className="text-amber-500">*</span>
+                <label className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1.5">
+                  <CarFront className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
+                  Mẫu xe bạn muốn trải nghiệm <span className="text-[var(--brand-gold)]">*</span>
                 </label>
                 {selectedCar ? (
-                  <div className="px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm font-semibold text-amber-400">
+                  <div className="px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm font-semibold text-[var(--brand-gold)]">
                     {selectedCar.name}
                   </div>
                 ) : (
@@ -153,10 +156,10 @@ export default function TestDriveModal() {
                     required
                     value={carId}
                     onChange={(e) => setCarId(Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)] focus:ring-1 focus:ring-[var(--brand-gold)] transition"
                   >
                     {cars.map((c) => (
-                      <option key={c.id} value={c.id}>
+                      <option key={c.id} value={c.id} className="bg-[var(--surface-base)] text-[var(--text-primary)]">
                         {c.name} ({c.year}) - {(c.price / 1_000_000_000).toFixed(2)} tỷ
                       </option>
                     ))}
@@ -167,8 +170,8 @@ export default function TestDriveModal() {
               {/* Tên & SĐT */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-300">
-                    Họ và tên <span className="text-amber-500">*</span>
+                  <label className="text-xs font-medium text-[var(--text-secondary)]">
+                    Họ và tên <span className="text-[var(--brand-gold)]">*</span>
                   </label>
                   <input
                     type="text"
@@ -176,12 +179,12 @@ export default function TestDriveModal() {
                     placeholder="Nguyễn Văn A"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-300">
-                    Số điện thoại <span className="text-amber-500">*</span>
+                  <label className="text-xs font-medium text-[var(--text-secondary)]">
+                    Số điện thoại <span className="text-[var(--brand-gold)]">*</span>
                   </label>
                   <input
                     type="tel"
@@ -189,70 +192,70 @@ export default function TestDriveModal() {
                     placeholder="0908 xxx xxx"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
                   />
                 </div>
               </div>
 
               {/* Email */}
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300">Email nhận vé xác nhận (Tuỳ chọn)</label>
+                <label className="text-xs font-medium text-[var(--text-secondary)]">Email nhận vé xác nhận (Tuỳ chọn)</label>
                 <input
                   type="email"
                   placeholder="yourname@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                  className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
                 />
               </div>
 
               {/* Ngày & Giờ */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-300 flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                    Ngày hẹn lái thử <span className="text-amber-500">*</span>
+                  <label className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1">
+                    <Calendar className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
+                    Ngày hẹn lái thử <span className="text-[var(--brand-gold)]">*</span>
                   </label>
                   <input
                     type="date"
                     required
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)] transition"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-300 flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-amber-400" />
+                  <label className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
                     Khung giờ mong muốn
                   </label>
                   <select
                     value={timeSlot}
                     onChange={(e) => setTimeSlot(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)] transition"
                   >
-                    <option value="09:00 - 11:00">Buổi sáng (09:00 - 11:00)</option>
-                    <option value="14:00 - 16:00">Buổi chiều (14:00 - 16:00)</option>
-                    <option value="16:30 - 18:30">Hoàng hôn (16:30 - 18:30)</option>
+                    <option value="09:00 - 11:00" className="bg-[var(--surface-base)] text-[var(--text-primary)]">Buổi sáng (09:00 - 11:00)</option>
+                    <option value="14:00 - 16:00" className="bg-[var(--surface-base)] text-[var(--text-primary)]">Buổi chiều (14:00 - 16:00)</option>
+                    <option value="16:30 - 18:30" className="bg-[var(--surface-base)] text-[var(--text-primary)]">Hoàng hôn (16:30 - 18:30)</option>
                   </select>
                 </div>
               </div>
 
               {/* Địa điểm */}
               <div className="space-y-1.5 pt-1">
-                <label className="text-xs font-medium text-zinc-300 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                <label className="text-xs font-medium text-[var(--text-secondary)] flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
                   Hình thức tiếp đón
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setLocationType("showroom")}
-                    className={`py-2 px-3 rounded-lg border text-xs font-medium transition ${
+                    className={`py-2 px-3 rounded-lg border text-xs font-medium transition cursor-pointer ${
                       locationType === "showroom"
-                        ? "bg-amber-500/10 border-amber-500 text-amber-400"
-                        : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white"
+                        ? "bg-[var(--brand-gold)]/15 border-[var(--brand-gold)] text-[var(--brand-gold)] font-semibold shadow-xs"
+                        : "bg-[var(--surface-low)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     Tại Showroom Atelier
@@ -260,10 +263,10 @@ export default function TestDriveModal() {
                   <button
                     type="button"
                     onClick={() => setLocationType("home")}
-                    className={`py-2 px-3 rounded-lg border text-xs font-medium transition ${
+                    className={`py-2 px-3 rounded-lg border text-xs font-medium transition cursor-pointer ${
                       locationType === "home"
-                        ? "bg-amber-500/10 border-amber-500 text-amber-400"
-                        : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white"
+                        ? "bg-[var(--brand-gold)]/15 border-[var(--brand-gold)] text-[var(--brand-gold)] font-semibold shadow-xs"
+                        : "bg-[var(--surface-low)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     Đưa xe tận tư gia
@@ -273,27 +276,27 @@ export default function TestDriveModal() {
 
               {locationType === "home" && (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-zinc-300">Địa chỉ tư gia / cơ quan</label>
+                  <label className="text-xs font-medium text-[var(--text-secondary)]">Địa chỉ tư gia / cơ quan</label>
                   <input
                     type="text"
                     required
                     placeholder="VD: Khu biệt thự Chateau, Phú Mỹ Hưng, Q.7"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                    className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
                   />
                 </div>
               )}
 
               {/* Ghi chú */}
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-zinc-300">Yêu cầu đặc biệt</label>
+                <label className="text-xs font-medium text-[var(--text-secondary)]">Yêu cầu đặc biệt</label>
                 <textarea
                   rows={2}
                   placeholder="Ví dụ: Mong muốn trải nghiệm cung đường cao tốc, có mang theo gia đình..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full px-3 py-2 bg-zinc-900 border border-zinc-800 rounded-lg text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                  className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
                 />
               </div>
 
@@ -301,7 +304,7 @@ export default function TestDriveModal() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm rounded-xl transition shadow-lg shadow-amber-500/20 disabled:opacity-50"
+                  className="w-full py-3 bg-[var(--brand-gold)] hover:bg-[#8A6C44] text-[#0B0C0E] font-semibold text-xs uppercase tracking-wider rounded-xl transition shadow-lg disabled:opacity-50 cursor-pointer"
                 >
                   {loading ? "Đang xử lý đặt lịch..." : "Xác Nhận Đặt Lịch Lái Thử"}
                 </button>

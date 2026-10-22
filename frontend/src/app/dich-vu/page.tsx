@@ -18,10 +18,10 @@ import ContactConsultSection from "@/components/sections/ContactConsultSection";
 const servicesList = [
   {
     icon: ShieldCheck,
-    title: "1. Thẩm Định & Kiểm Định 150 Điểm Độc Lập",
+    title: "1. Thẩm Định & Kiểm Định 160 Điểm Độc Lập",
     description: "Được thực hiện bởi đội ngũ kỹ sư trưởng từng công tác tại các hãng siêu xe. Chúng tôi sử dụng thiết bị soi buồng đốt, đo vi sai khung gầm, quét cảm biến áp suất dầu và kiểm tra độ dày lớp sơn nguyên bản trên từng milimet thân vỏ.",
     benefits: [
-      "Biên bản kiểm định minh bạch 150 hạng mục",
+      "Biên bản kiểm định minh bạch 160 hạng mục",
       "Xác nhận xe không đâm đụng, không ngập nước thủy kích",
       "Đo lường hao mòn các chi tiết cơ khí và điện tử",
     ],

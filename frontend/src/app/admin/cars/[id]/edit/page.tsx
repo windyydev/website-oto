@@ -18,19 +18,8 @@ import {
   ExternalLink
 } from "lucide-react";
 import { adminApi, Brand, Car, CarImage } from "@/lib/api";
-
-function slugify(text: string) {
-  return text
-    .toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[đĐ]/g, "d")
-    .replace(/[^a-z0-9 -]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-}
+import { slugify } from "@/lib/utils";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
 interface SelectedFile {
   file: File;
@@ -259,54 +248,46 @@ export default function EditCarPage({ params }: { params: Promise<{ id: string }
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header Bar */}
-      <div className="flex items-center justify-between pb-4 border-b border-[var(--border-subtle)]">
-        <div>
-          <Link
-            href="/admin/cars"
-            className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--brand-gold)] transition mb-1"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Quay lại bộ sưu tập xe
-          </Link>
-          <h1 className="font-display text-2xl font-bold tracking-tight text-[var(--text-primary)]">
-            Chỉnh Sửa Thông Tin Xe
-          </h1>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link
-            href={`/xe/${slug}`}
-            target="_blank"
-            className="px-3.5 py-2 rounded-lg border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-low)] transition flex items-center gap-1.5"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            <span>Xem thực tế</span>
-          </Link>
-          <button
-            type="button"
-            onClick={() => router.push("/admin/cars")}
-            className="px-3.5 py-2 rounded-lg border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-low)] transition"
-          >
-            Hủy bỏ
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="px-5 py-2 rounded-lg bg-[var(--brand-primary)] text-[var(--text-inverted)] hover:opacity-90 font-medium text-xs shadow-sm transition flex items-center gap-2 disabled:opacity-50"
-          >
-            {submitting ? (
-              <>
-                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                <span>Đang lưu...</span>
-              </>
-            ) : (
-              <>
-                <Check className="w-3.5 h-3.5" />
-                <span>Lưu thay đổi</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        breadcrumbs={{ category: "KHO XE SALA", subCategory: "CHỈNH SỬA XE" }}
+        title="Chỉnh Sửa Thông Tin Xe"
+        actions={
+          <div className="flex items-center gap-3">
+            <Link
+              href={`/xe/${slug}`}
+              target="_blank"
+              className="px-3.5 py-2 rounded-lg border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-low)] transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Xem thực tế</span>
+            </Link>
+            <button
+              type="button"
+              onClick={() => router.push("/admin/cars")}
+              className="px-3.5 py-2 rounded-lg border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-low)] transition cursor-pointer"
+            >
+              Hủy bỏ
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="px-5 py-2 rounded-lg bg-[var(--brand-primary)] text-[var(--text-inverted)] hover:opacity-90 font-medium text-xs shadow-sm transition flex items-center gap-2 disabled:opacity-50 cursor-pointer"
+            >
+              {submitting ? (
+                <>
+                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Đang lưu...</span>
+                </>
+              ) : (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  <span>Lưu thay đổi</span>
+                </>
+              )}
+            </button>
+          </div>
+        }
+      />
 
       {/* Notifications */}
       {error && (
