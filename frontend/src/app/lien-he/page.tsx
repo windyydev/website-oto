@@ -3,17 +3,17 @@ import ContactConsultSection from "@/components/sections/ContactConsultSection";
 
 export default function ContactPage() {
   return (
-    <div className="bg-[#FBFBFA] min-h-screen text-[#121316]">
+    <div className="bg-[var(--bg-app)] min-h-screen text-[var(--text-primary)]">
       {/* Hero Banner */}
-      <div className="bg-[#121316] text-[#FBFBFA] py-20 border-b border-[#2f3130]">
+      <div className="bg-[var(--surface-base)] text-[var(--text-primary)] py-20 border-b border-[var(--border-subtle)]">
         <div className="max-w-[1480px] mx-auto px-6 lg:px-12 space-y-4">
-          <span className="text-[11px] font-semibold text-[#9E7D53] uppercase tracking-[0.2em] block">
+          <span className="text-[11px] font-semibold text-[var(--brand-gold)] uppercase tracking-[0.2em] block">
             Visit Our Atelier
           </span>
-          <h1 className="text-3xl sm:text-5xl font-display font-semibold text-white tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-display font-semibold text-[var(--text-primary)] tracking-tight">
             Liên Hệ & Đặt Lịch Tiếp Đón
           </h1>
-          <p className="text-sm text-[#dadad9] max-w-xl font-light leading-relaxed">
+          <p className="text-sm text-[var(--text-secondary)] max-w-xl font-light leading-relaxed">
             Chúng tôi hân hạnh đón tiếp quý khách tại không gian thưởng lãm biệt lập tại trung tâm Quận 1, TP. Hồ Chí Minh.
           </p>
         </div>
@@ -22,38 +22,38 @@ export default function ContactPage() {
       {/* Info Cards */}
       <div className="max-w-[1480px] mx-auto px-6 lg:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="p-8 bg-white border border-[#EAEAE7] rounded-xl space-y-3 shadow-sm">
-            <div className="w-10 h-10 rounded bg-[#F4F4F2] flex items-center justify-center text-[#9E7D53]">
+          <div className="p-8 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl space-y-3 shadow-xs">
+            <div className="w-10 h-10 rounded bg-[var(--surface-low)] flex items-center justify-center text-[var(--brand-gold)]">
               <MapPin className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-display font-semibold text-[#121316]">
+            <h3 className="text-base font-display font-semibold text-[var(--text-primary)]">
               Phòng Trưng Bày Trung Tâm
             </h3>
-            <p className="text-xs text-[#66686B] leading-relaxed">
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
               Số 18 Đường Lê Duẩn, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh. Có bãi đậu xe riêng an ninh 24/7.
             </p>
           </div>
 
-          <div className="p-8 bg-white border border-[#EAEAE7] rounded-xl space-y-3 shadow-sm">
-            <div className="w-10 h-10 rounded bg-[#F4F4F2] flex items-center justify-center text-[#9E7D53]">
+          <div className="p-8 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl space-y-3 shadow-xs">
+            <div className="w-10 h-10 rounded bg-[var(--surface-low)] flex items-center justify-center text-[var(--brand-gold)]">
               <Phone className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-display font-semibold text-[#121316]">
+            <h3 className="text-base font-display font-semibold text-[var(--text-primary)]">
               Hotline Concierge 24/7
             </h3>
-            <p className="text-xs text-[#66686B] leading-relaxed">
-              Hỗ trợ tư vấn đặt lịch lái thử, ký gửi xe và thẩm định giá: <strong className="text-[#121316]">0908 123 456</strong>
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+              Hỗ trợ tư vấn đặt lịch lái thử, ký gửi xe và thẩm định giá: <strong className="text-[var(--text-primary)]">0908 123 456</strong>
             </p>
           </div>
 
-          <div className="p-8 bg-white border border-[#EAEAE7] rounded-xl space-y-3 shadow-sm">
-            <div className="w-10 h-10 rounded bg-[#F4F4F2] flex items-center justify-center text-[#9E7D53]">
+          <div className="p-8 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl space-y-3 shadow-xs">
+            <div className="w-10 h-10 rounded bg-[var(--surface-low)] flex items-center justify-center text-[var(--brand-gold)]">
               <Clock className="w-5 h-5" />
             </div>
-            <h3 className="text-base font-display font-semibold text-[#121316]">
+            <h3 className="text-base font-display font-semibold text-[var(--text-primary)]">
               Khung Giờ Tiếp Khách VIP
             </h3>
-            <p className="text-xs text-[#66686B] leading-relaxed">
+            <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
               Thứ Hai - Chủ Nhật: 08:30 - 20:00. Vui lòng đặt hẹn trước để được phục vụ phòng tiếp khách riêng biệt.
             </p>
           </div>

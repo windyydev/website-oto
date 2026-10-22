@@ -6,7 +6,6 @@ import Link from "next/link";
 import { 
   ArrowLeft, 
   UploadCloud, 
-  Image as ImageIcon, 
   X, 
   Check, 
   Star, 
@@ -59,23 +58,28 @@ export default function CreateCarPage() {
   const [odoKm, setOdoKm] = useState<number>(0);
   const [condition, setCondition] = useState<"new" | "used">("new");
   const [status, setStatus] = useState<"available" | "reserved" | "sold">("available");
-  const [exteriorColor, setExteriorColor] = useState("Trắng");
-  const [interior, setInterior] = useState("Da Nappa Đen");
+  const [exteriorColor, setExteriorColor] = useState("");
+  const [interior, setInterior] = useState("");
   const [description, setDescription] = useState("");
-  const [isFeatured, setIsFeatured] = useState(true);
+  const [isFeatured, setIsFeatured] = useState(false);
 
   // Images state
   const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
   const [defaultCategory, setDefaultCategory] = useState<"exterior" | "interior" | "dashboard" | "wheels">("exterior");
 
   useEffect(() => {
-    adminApi.getBrands().then((res) => {
-      setBrands(res);
-      if (res.length > 0) {
-        setBrandId(res[0].id);
-      }
-    });
+    fetchBrands();
   }, []);
+
+  const fetchBrands = async () => {
+    try {
+      const data = await adminApi.getBrands();
+      setBrands(data);
+      if (data.length > 0) setBrandId(data[0].id);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleNameChange = (val: string) => {
     setName(val);
@@ -90,17 +94,15 @@ export default function CreateCarPage() {
       file,
       previewUrl: URL.createObjectURL(file),
       category: defaultCategory,
-      isPrimary: selectedFiles.length === 0 && idx === 0, // First image is default primary
+      isPrimary: selectedFiles.length === 0 && idx === 0,
     }));
 
     setSelectedFiles((prev) => [...prev, ...newSelected]);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleRemoveFile = (index: number) => {
     setSelectedFiles((prev) => {
       const updated = prev.filter((_, i) => i !== index);
-      // If removed item was primary, set new primary if exists
       if (prev[index].isPrimary && updated.length > 0) {
         updated[0].isPrimary = true;
       }
@@ -164,7 +166,6 @@ export default function CreateCarPage() {
       if (selectedFiles.length > 0) {
         setUploadStatus(`Đang tải ${selectedFiles.length} ảnh lên Cloudinary...`);
 
-        // Gom nhóm theo category
         const categories: Array<"exterior" | "interior" | "dashboard" | "wheels"> = [
           "exterior",
           "interior",
@@ -206,78 +207,80 @@ export default function CreateCarPage() {
       router.push("/admin/cars");
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.detail || "Có lỗi xảy ra khi tạo xe và upload ảnh.");
-    } finally {
+      setError(err.response?.data?.detail || err.message || "Lỗi khi tạo xe.");
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-12">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <Link
-          href="/admin/cars"
-          className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition"
-        >
-          <ArrowLeft className="w-4 h-4" />
-        </Link>
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Header Bar */}
+      <div className="flex items-center justify-between pb-4 border-b border-[var(--border-subtle)]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Thêm Xe Mới Vào Kho</h1>
-          <p className="text-xs text-zinc-400 mt-0.5">
-            Nhập thông số xe và tải trực tiếp ảnh sắc nét lên Cloudinary.
+          <Link
+            href="/admin/cars"
+            className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] transition mb-1"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Quay lại Bộ sưu tập</span>
+          </Link>
+          <h1 className="font-display text-2xl lg:text-3xl font-semibold tracking-tight text-[var(--text-primary)]">
+            Đăng Tải Xe Mới Vào Showroom
+          </h1>
+          <p className="text-xs text-[var(--text-muted)] mt-1">
+            Khai báo thông số kỹ thuật và tải lên hình ảnh chất lượng cao lưu trữ tại Cloudinary.
           </p>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 flex items-center gap-3 text-sm">
-          <AlertCircle className="w-5 h-5 shrink-0" />
+        <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 flex items-center gap-3 text-xs">
+          <AlertCircle className="w-4 h-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6">
         {/* Section 1: Thông tin cơ bản */}
-        <div className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-xl space-y-5">
-          <h2 className="text-base font-semibold text-white flex items-center gap-2">
-            <CarFront className="w-4 h-4 text-amber-400" />
+        <div className="p-6 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg space-y-5 shadow-xs">
+          <h2 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
+            <CarFront className="w-4 h-4 text-[var(--brand-gold)]" />
             1. Thông Tin Nhận Diện & Giá Bán
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Tên xe */}
             <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-medium text-zinc-300">Tên xe <span className="text-amber-500">*</span></label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Tên xe <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 required
                 placeholder="VD: Porsche 911 Carrera S"
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
 
             {/* Slug URL */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Đường dẫn thân thiện (Slug)</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Đường dẫn thân thiện (Slug)</label>
               <input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                className="w-full px-3.5 py-2 bg-zinc-950/70 border border-zinc-800 rounded-lg text-xs text-zinc-400 focus:outline-none focus:border-amber-500 font-mono"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] font-mono"
               />
             </div>
 
             {/* Hãng xe */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Hãng sản xuất <span className="text-amber-500">*</span></label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Hãng sản xuất <span className="text-red-500">*</span></label>
               <select
                 required
                 value={brandId}
                 onChange={(e) => setBrandId(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               >
                 {brands.map((b) => (
                   <option key={b.id} value={b.id}>
@@ -289,68 +292,68 @@ export default function CreateCarPage() {
 
             {/* Giá niêm yết */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Giá bán niêm yết (VNĐ) <span className="text-amber-500">*</span></label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Giá bán niêm yết (VNĐ) <span className="text-red-500">*</span></label>
               <input
                 type="number"
                 required
                 placeholder="VD: 8500000000"
                 value={price}
                 onChange={(e) => setPrice(e.target.value === "" ? "" : Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-amber-400 font-semibold focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--brand-gold)] font-mono font-semibold focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
 
             {/* Trả góp */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Ước tính trả góp hàng tháng (VNĐ)</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Ước tính trả góp hàng tháng (VNĐ)</label>
               <input
                 type="number"
                 placeholder="VD: 55000000"
                 value={monthlyInstallment}
                 onChange={(e) => setMonthlyInstallment(e.target.value === "" ? "" : Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] font-mono focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
           </div>
         </div>
 
         {/* Section 2: Thông số kỹ thuật */}
-        <div className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-xl space-y-5">
-          <h2 className="text-base font-semibold text-white flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-400" />
+        <div className="p-6 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg space-y-5 shadow-xs">
+          <h2 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-[var(--brand-gold)]" />
             2. Thông Số Kỹ Thuật & Tình Trạng
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {/* Năm sản xuất */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Năm sản xuất</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Năm sản xuất</label>
               <input
                 type="number"
                 value={year}
                 onChange={(e) => setYear(Number(e.target.value))}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] font-mono focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
 
             {/* ODO */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Số km đã đi (ODO)</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Số km đã đi (ODO)</label>
               <input
                 type="number"
                 value={odoKm}
                 onChange={(e) => setOdoKm(Number(e.target.value))}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] font-mono focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
 
             {/* Kiểu dáng */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Kiểu dáng</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Kiểu dáng</label>
               <select
                 value={bodyType}
                 onChange={(e) => setBodyType(e.target.value)}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               >
                 <option value="SUV">SUV</option>
                 <option value="Sedan">Sedan</option>
@@ -364,11 +367,11 @@ export default function CreateCarPage() {
 
             {/* Nhiên liệu */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Nhiên liệu</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Nhiên liệu</label>
               <select
                 value={fuelType}
                 onChange={(e) => setFuelType(e.target.value)}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               >
                 <option value="Xăng">Xăng</option>
                 <option value="Dầu">Dầu (Diesel)</option>
@@ -379,55 +382,55 @@ export default function CreateCarPage() {
 
             {/* Hộp số */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Hộp số</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Hộp số</label>
               <input
                 type="text"
                 value={transmission}
                 onChange={(e) => setTransmission(e.target.value)}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
 
             {/* Dẫn động */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Hệ dẫn động</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Hệ dẫn động</label>
               <input
                 type="text"
                 value={drivetrain}
                 onChange={(e) => setDrivetrain(e.target.value)}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
 
             {/* Màu ngoại thất */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Màu ngoại thất</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Màu ngoại thất</label>
               <input
                 type="text"
                 value={exteriorColor}
                 onChange={(e) => setExteriorColor(e.target.value)}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
 
             {/* Màu nội thất */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Màu nội thất</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Màu nội thất</label>
               <input
                 type="text"
                 value={interior}
                 onChange={(e) => setInterior(e.target.value)}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               />
             </div>
 
             {/* Tình trạng */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Tình trạng xe</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Tình trạng xe</label>
               <select
                 value={condition}
                 onChange={(e) => setCondition(e.target.value as any)}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               >
                 <option value="new">Xe mới 100%</option>
                 <option value="used">Xe lướt (Đã qua sử dụng)</option>
@@ -436,11 +439,11 @@ export default function CreateCarPage() {
 
             {/* Trạng thái kho */}
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Trạng thái kho</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Trạng thái kho</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full px-3.5 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 focus:outline-none focus:border-amber-500"
+                className="w-full px-3.5 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
               >
                 <option value="available">Sẵn sàng giao ngay</option>
                 <option value="reserved">Đã nhận cọc</option>
@@ -450,12 +453,12 @@ export default function CreateCarPage() {
 
             {/* Nổi bật */}
             <div className="space-y-1.5 sm:col-span-2 flex items-center gap-3 pt-6">
-              <label className="flex items-center gap-2 cursor-pointer text-sm text-zinc-200">
+              <label className="flex items-center gap-2 cursor-pointer text-xs text-[var(--text-primary)]">
                 <input
                   type="checkbox"
                   checked={isFeatured}
                   onChange={(e) => setIsFeatured(e.target.checked)}
-                  className="w-4 h-4 rounded accent-amber-500 bg-zinc-950 border-zinc-800"
+                  className="w-4 h-4 rounded accent-[var(--brand-gold)] bg-[var(--surface-low)] border-[var(--border-subtle)]"
                 />
                 <span>Ghim xe nổi bật lên trang chủ showroom (Featured)</span>
               </label>
@@ -464,37 +467,37 @@ export default function CreateCarPage() {
 
           {/* Mô tả */}
           <div className="space-y-1.5 pt-2">
-            <label className="text-xs font-medium text-zinc-300">Mô tả chi tiết / Lịch sử xe</label>
+            <label className="text-xs font-medium text-[var(--text-secondary)]">Mô tả chi tiết / Lịch sử xe</label>
             <textarea
               rows={4}
               placeholder="Nhập thông tin trang bị nổi bật, lịch sử bảo dưỡng chính hãng, cam kết không đâm đụng ngập nước..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3.5 py-2.5 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:border-amber-500"
+              className="w-full px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)]"
             />
           </div>
         </div>
 
         {/* Section 3: Upload ảnh Cloudinary */}
-        <div className="p-6 bg-zinc-900/80 border border-zinc-800 rounded-xl space-y-5">
+        <div className="p-6 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg space-y-5 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
-              <h2 className="text-base font-semibold text-white flex items-center gap-2">
-                <UploadCloud className="w-5 h-5 text-amber-400" />
+              <h2 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
+                <UploadCloud className="w-5 h-5 text-[var(--brand-gold)]" />
                 3. Bộ Ảnh Chi Tiết Xe (Cloudinary Storage)
               </h2>
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">
                 Kéo thả hoặc chọn nhiều ảnh. Ảnh sẽ tự động tối ưu và lưu vào Cloudinary.
               </p>
             </div>
 
             {/* Category selector for new uploads */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-zinc-400">Phân loại mặc định:</span>
+              <span className="text-xs text-[var(--text-muted)]">Phân loại mặc định:</span>
               <select
                 value={defaultCategory}
                 onChange={(e) => setDefaultCategory(e.target.value as any)}
-                className="px-2.5 py-1 bg-zinc-950 border border-zinc-800 rounded text-xs text-zinc-200"
+                className="px-2.5 py-1 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded text-xs text-[var(--text-primary)]"
               >
                 <option value="exterior">Ngoại thất</option>
                 <option value="interior">Nội thất</option>
@@ -507,7 +510,7 @@ export default function CreateCarPage() {
           {/* Drag & Drop Area */}
           <div
             onClick={() => fileInputRef.current?.click()}
-            className="border-2 border-dashed border-zinc-700 hover:border-amber-500/80 bg-zinc-950/50 hover:bg-zinc-950/80 rounded-xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition text-center group"
+            className="border-2 border-dashed border-[var(--border-subtle)] hover:border-[var(--brand-gold)] bg-[var(--surface-low)]/50 hover:bg-[var(--surface-low)] rounded-lg p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition text-center group"
           >
             <input
               ref={fileInputRef}
@@ -517,14 +520,14 @@ export default function CreateCarPage() {
               onChange={handleFileSelect}
               className="hidden"
             />
-            <div className="p-3 rounded-full bg-zinc-900 group-hover:bg-amber-500/10 text-zinc-400 group-hover:text-amber-400 transition">
+            <div className="p-3 rounded-full bg-[var(--surface-base)] border border-[var(--border-subtle)] text-[var(--text-muted)] group-hover:text-[var(--brand-gold)] transition">
               <UploadCloud className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-zinc-200">
+              <p className="text-xs font-medium text-[var(--text-primary)]">
                 Nhấp để chọn ảnh hoặc kéo thả vào đây
               </p>
-              <p className="text-xs text-zinc-500 mt-1">
+              <p className="text-[11px] text-[var(--text-muted)] mt-1">
                 Hỗ trợ PNG, JPG, WebP. Tải lên nhiều ảnh cùng lúc.
               </p>
             </div>
@@ -533,22 +536,22 @@ export default function CreateCarPage() {
           {/* Selected Images Preview Grid */}
           {selectedFiles.length > 0 && (
             <div className="space-y-3 pt-3">
-              <div className="flex items-center justify-between text-xs text-zinc-400">
-                <span>Đã chọn <strong className="text-amber-400">{selectedFiles.length}</strong> ảnh</span>
-                <span className="text-zinc-500">Bấm vào dấu sao để chọn làm Ảnh Đại Diện</span>
+              <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
+                <span>Đã chọn <strong className="text-[var(--brand-gold)]">{selectedFiles.length}</strong> ảnh</span>
+                <span>Bấm vào dấu sao để chọn làm Ảnh Đại Diện</span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {selectedFiles.map((item, idx) => (
                   <div
                     key={idx}
-                    className={`relative rounded-lg overflow-hidden border bg-zinc-950 group ${
+                    className={`relative rounded-lg overflow-hidden border bg-[var(--surface-base)] group ${
                       item.isPrimary
-                        ? "border-amber-500 ring-2 ring-amber-500/20"
-                        : "border-zinc-800"
+                        ? "border-[var(--brand-gold)] ring-2 ring-[var(--brand-gold)]/20"
+                        : "border-[var(--border-subtle)]"
                     }`}
                   >
-                    <div className="aspect-[4/3] w-full overflow-hidden">
+                    <div className="aspect-[4/3] w-full overflow-hidden bg-[var(--surface-low)]">
                       <img
                         src={item.previewUrl}
                         alt="preview"
@@ -558,7 +561,7 @@ export default function CreateCarPage() {
 
                     {/* Badge primary */}
                     {item.isPrimary && (
-                      <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-amber-500 text-black text-[10px] font-bold shadow-md">
+                      <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded bg-[var(--brand-gold)] text-black text-[10px] font-bold shadow-md">
                         Ảnh Chính
                       </span>
                     )}
@@ -571,8 +574,8 @@ export default function CreateCarPage() {
                         title="Đặt làm ảnh chính"
                         className={`p-1 rounded-full backdrop-blur-md transition ${
                           item.isPrimary
-                            ? "bg-amber-500 text-black"
-                            : "bg-black/60 text-zinc-400 hover:text-amber-400"
+                            ? "bg-[var(--brand-gold)] text-black"
+                            : "bg-black/60 text-white/70 hover:text-[var(--brand-gold)]"
                         }`}
                       >
                         <Star className="w-3.5 h-3.5 fill-current" />
@@ -581,18 +584,18 @@ export default function CreateCarPage() {
                         type="button"
                         onClick={() => handleRemoveFile(idx)}
                         title="Xóa ảnh"
-                        className="p-1 rounded-full bg-black/60 text-zinc-400 hover:text-red-400 backdrop-blur-md transition"
+                        className="p-1 rounded-full bg-black/60 text-white/70 hover:text-red-400 backdrop-blur-md transition"
                       >
                         <X className="w-3.5 h-3.5" />
                       </button>
                     </div>
 
                     {/* Category drop down */}
-                    <div className="p-1.5 bg-zinc-900 border-t border-zinc-800">
+                    <div className="p-1.5 bg-[var(--surface-low)] border-t border-[var(--border-subtle)]">
                       <select
                         value={item.category}
                         onChange={(e) => handleCategoryChange(idx, e.target.value as any)}
-                        className="w-full bg-zinc-950 text-[11px] text-zinc-300 border border-zinc-800 rounded px-1.5 py-0.5"
+                        className="w-full bg-[var(--surface-base)] text-[11px] text-[var(--text-primary)] border border-[var(--border-subtle)] rounded px-1.5 py-0.5"
                       >
                         <option value="exterior">Ngoại thất</option>
                         <option value="interior">Nội thất</option>
@@ -608,21 +611,21 @@ export default function CreateCarPage() {
         </div>
 
         {/* Submit Actions */}
-        <div className="flex items-center justify-end gap-4 pt-4 border-t border-zinc-800">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--border-subtle)]">
           <Link
             href="/admin/cars"
-            className="px-5 py-2.5 rounded-lg border border-zinc-800 text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition"
+            className="px-5 py-2.5 rounded-lg border border-[var(--border-subtle)] text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--surface-low)] transition"
           >
             Hủy Bỏ
           </Link>
           <button
             type="submit"
             disabled={submitting}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm transition shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] font-semibold text-xs transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? (
               <>
-                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 <span>{uploadStatus || "Đang xử lý..."}</span>
               </>
             ) : (

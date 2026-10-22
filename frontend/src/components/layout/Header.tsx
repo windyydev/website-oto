@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTestDrive } from "@/context/TestDriveContext";
 import { Menu, X, ArrowUpRight, Sparkles, Phone } from "lucide-react";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const navLinks = [
   { name: "Trang chủ", href: "/" },
@@ -25,18 +26,18 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-[#FBFBFA]/90 backdrop-blur-md border-b border-[#EAEAE7]">
+      <header className="sticky top-0 z-40 w-full bg-[var(--bg-app)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]">
         <div className="max-w-[1480px] mx-auto px-5 lg:px-12 h-16 md:h-20 flex items-center justify-between">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center gap-2.5 group" onClick={() => setMobileMenuOpen(false)}>
-            <div className="w-8 h-8 rounded bg-[#121316] flex items-center justify-center text-[#FBFBFA] shadow-sm transition group-hover:scale-105">
+            <div className="w-8 h-8 rounded bg-[var(--brand-primary)] flex items-center justify-center text-[var(--text-inverted)] shadow-sm transition group-hover:scale-105">
               <span className="font-display font-bold text-sm tracking-tighter">A</span>
             </div>
             <div>
-              <span className="font-display font-semibold text-base tracking-wider uppercase text-[#121316] block">
+              <span className="font-display font-semibold text-base tracking-wider uppercase text-[var(--text-primary)] block">
                 Atelier
               </span>
-              <span className="text-[10px] text-[#9E7D53] font-medium tracking-[0.2em] block uppercase">
+              <span className="text-[10px] text-[var(--brand-gold)] font-medium tracking-[0.2em] block uppercase">
                 Curated Automotive
               </span>
             </div>
@@ -52,13 +53,13 @@ export default function Header() {
                   href={item.href}
                   className={`text-sm font-medium transition-colors relative py-1 ${
                     isActive
-                      ? "text-[#121316] font-semibold"
-                      : "text-[#66686B] hover:text-[#121316]"
+                      ? "text-[var(--text-primary)] font-semibold"
+                      : "text-[var(--text-muted)] hover:text-[var(--text-primary)]"
                   }`}
                 >
                   {item.name}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#9E7D53]" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--brand-gold)]" />
                   )}
                 </Link>
               );
@@ -69,23 +70,25 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-4">
             <a
               href="tel:0908123456"
-              className="flex items-center gap-2 text-xs font-semibold text-[#121316] hover:text-[#9E7D53] transition px-3 py-2"
+              className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] hover:text-[var(--brand-gold)] transition px-3 py-2"
             >
-              <Phone className="w-3.5 h-3.5 text-[#9E7D53]" />
+              <Phone className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
               <span>0908 123 456</span>
             </a>
 
             <button
               onClick={() => openModal()}
-              className="px-5 py-2.5 bg-[#121316] hover:bg-[#121316]/90 text-[#FBFBFA] text-xs font-semibold uppercase tracking-wider rounded transition shadow-sm flex items-center gap-2"
+              className="px-5 py-2.5 bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] text-xs font-semibold uppercase tracking-wider rounded transition shadow-sm flex items-center gap-2"
             >
               <span>Đặt Lịch Lái Thử</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-[#9E7D53]" />
+              <ArrowUpRight className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
             </button>
+
+            <ThemeToggle />
 
             <Link
               href="/admin"
-              className="text-[11px] font-medium text-[#66686B] hover:text-[#121316] px-2 py-1 rounded border border-[#EAEAE7] hover:border-[#9E7D53] transition"
+              className="text-[11px] font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] px-2.5 py-1.5 rounded border border-[var(--border-subtle)] hover:border-[var(--brand-gold)] transition"
             >
               Admin
             </Link>
@@ -95,20 +98,20 @@ export default function Header() {
           <div className="flex md:hidden items-center gap-1.5">
             <a
               href="tel:0908123456"
-              className="p-2.5 text-[#9E7D53] hover:bg-[#F4F4F2] rounded-full transition"
+              className="p-2.5 text-[var(--brand-gold)] hover:bg-[var(--surface-low)] rounded-full transition"
               aria-label="Gọi điện"
             >
               <Phone className="w-5 h-5" />
             </a>
             <button
               onClick={() => openModal()}
-              className="px-3 py-1.5 bg-[#121316] text-[#FBFBFA] text-[11px] font-semibold uppercase rounded tracking-wider"
+              className="px-3 py-1.5 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-[11px] font-semibold uppercase rounded tracking-wider"
             >
               Lái Thử
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-[#121316] hover:bg-[#F4F4F2] rounded transition flex items-center justify-center min-w-[44px] min-h-[44px]"
+              className="p-2 text-[var(--text-primary)] hover:bg-[var(--surface-low)] rounded transition flex items-center justify-center min-w-[44px] min-h-[44px]"
               aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -119,7 +122,7 @@ export default function Header() {
 
       {/* Mobile Overlay backdrop */}
       <div
-        className={`fixed inset-0 z-30 bg-[#121316]/40 backdrop-blur-sm md:hidden transition-opacity duration-300 ${
+        className={`fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:hidden transition-opacity duration-300 ${
           mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMobileMenuOpen(false)}
@@ -127,7 +130,7 @@ export default function Header() {
 
       {/* Mobile Drawer Sheet — slides from top, below sticky header */}
       <div
-        className={`fixed top-16 left-0 right-0 z-[35] md:hidden bg-[#FBFBFA] border-b border-[#EAEAE7] shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${
+        className={`fixed top-16 left-0 right-0 z-[35] md:hidden bg-[var(--bg-app)] border-b border-[var(--border-subtle)] shadow-xl transition-all duration-300 ease-in-out overflow-hidden ${
           mobileMenuOpen ? "max-h-[90vh] opacity-100" : "max-h-0 opacity-0 pointer-events-none"
         }`}
       >
@@ -143,41 +146,45 @@ export default function Header() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center justify-between px-4 py-3.5 rounded-lg text-sm font-medium transition min-h-[52px] ${
                     isActive
-                      ? "bg-[#121316] text-[#FBFBFA]"
-                      : "text-[#121316] hover:bg-[#F4F4F2] active:bg-[#EAEAE7]"
+                      ? "bg-[var(--brand-primary)] text-[var(--text-inverted)]"
+                      : "text-[var(--text-primary)] hover:bg-[var(--surface-low)]"
                   }`}
                 >
                   <span>{item.name}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#9E7D53]" />}
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[var(--brand-gold)]" />}
                 </Link>
               );
             })}
           </nav>
 
           {/* CTAs */}
-          <div className="border-t border-[#EAEAE7] pt-4 pb-2 space-y-2.5">
+          <div className="border-t border-[var(--border-subtle)] pt-4 pb-2 space-y-2.5">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 openModal();
               }}
-              className="w-full py-3.5 bg-[#121316] text-[#FBFBFA] text-sm font-semibold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 min-h-[52px]"
+              className="w-full py-3.5 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-sm font-semibold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 min-h-[52px]"
             >
-              <Sparkles className="w-4 h-4 text-[#9E7D53]" />
+              <Sparkles className="w-4 h-4 text-[var(--brand-gold)]" />
               Đặt Lịch Lái Thử
             </button>
             <a
               href="tel:0908123456"
-              className="w-full py-3.5 bg-[#F4F4F2] text-[#121316] text-sm font-semibold rounded-lg flex items-center justify-center gap-2 min-h-[52px]"
+              className="w-full py-3.5 bg-[var(--surface-low)] text-[var(--text-primary)] text-sm font-semibold rounded-lg flex items-center justify-center gap-2 min-h-[52px]"
               onClick={() => setMobileMenuOpen(false)}
             >
-              <Phone className="w-4 h-4 text-[#9E7D53]" />
+              <Phone className="w-4 h-4 text-[var(--brand-gold)]" />
               0908 123 456
             </a>
+            <div className="flex items-center justify-between px-2 pt-2">
+              <span className="text-xs text-[var(--text-secondary)] font-medium">Giao diện (Dark/Light):</span>
+              <ThemeToggle />
+            </div>
             <Link
               href="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full py-3 text-center text-xs text-[#66686B] border border-[#EAEAE7] rounded-lg flex items-center justify-center min-h-[44px]"
+              className="w-full py-3 text-center text-xs text-[var(--text-secondary)] border border-[var(--border-subtle)] rounded-lg flex items-center justify-center min-h-[44px]"
             >
               Quản Trị Hệ Thống (Admin)
             </Link>

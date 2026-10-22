@@ -1,4 +1,3 @@
-import { Shield, Award, Sparkles, Clock } from "lucide-react";
 
 const stats = [
   { value: "150+", label: "Hạng mục kiểm định khắt khe", sub: "Nội soi cơ khí độc lập" },

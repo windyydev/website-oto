@@ -8,9 +8,8 @@ import {
   Search, 
   Trash2, 
   ExternalLink, 
-  SlidersHorizontal,
   RefreshCw,
-  AlertCircle
+  Pencil
 } from "lucide-react";
 import { adminApi, Car, Brand } from "@/lib/api";
 
@@ -58,9 +57,10 @@ export default function AdminCarsPage() {
   };
 
   const handleDeleteCar = async (id: number, name: string) => {
-    if (!confirm(`Bạn có chắc chắn muốn xóa xe "${name}" không? Toàn bộ ảnh trên Cloudinary cũng sẽ được xóa sạch.`)) {
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa "${name}"? Hành động này sẽ dọn dẹp toàn bộ ảnh lưu trên Cloudinary và không thể hoàn tác.`)) {
       return;
     }
+
     try {
       await adminApi.deleteCar(id);
       fetchCars();
@@ -78,17 +78,25 @@ export default function AdminCarsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-[var(--border-subtle)]">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Quản Lý Danh Sách Xe</h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            Tổng cộng <span className="text-amber-400 font-semibold">{total}</span> xe trong kho
+          <div className="flex items-center gap-2 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-1">
+            <span>BẢNG ĐIỀU KHIỂN</span>
+            <span>•</span>
+            <span className="text-[var(--brand-gold)]">KHO XE SALA</span>
+          </div>
+          <h1 className="font-display text-2xl lg:text-3xl font-semibold tracking-tight text-[var(--text-primary)]">
+            Quản Lý Bộ Sưu Tập Xe
+          </h1>
+          <p className="text-xs text-[var(--text-muted)] mt-1">
+            Hiện có <strong className="text-[var(--text-primary)] font-mono">{total}</strong> mẫu xe đang được trưng bày và phân phối.
           </p>
         </div>
+
         <Link
           href="/admin/cars/create"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm transition shadow-lg shadow-amber-500/10 shrink-0"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] font-semibold text-xs transition shadow-sm shrink-0 self-start sm:self-auto"
         >
           <PlusCircle className="w-4 h-4" />
           <span>Thêm Xe Mới</span>
@@ -96,17 +104,17 @@ export default function AdminCarsPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="p-4 bg-zinc-900/80 border border-zinc-800 rounded-xl flex flex-col md:flex-row gap-3 items-center">
+      <div className="p-4 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg flex flex-col md:flex-row gap-3 items-center shadow-xs">
         {/* Search Input */}
         <div className="relative flex-1 w-full">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
           <input
             type="text"
-            placeholder="Tìm theo tên xe (VD: Porsche, Mercedes C300...)"
+            placeholder="Tìm theo tên xe (VD: Porsche, Taycan, Mercedes Maybach...)"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && fetchCars()}
-            className="w-full pl-10 pr-4 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-amber-500 transition"
+            className="w-full pl-10 pr-4 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
           />
         </div>
 
@@ -114,7 +122,7 @@ export default function AdminCarsPage() {
         <select
           value={brandId}
           onChange={(e) => setBrandId(e.target.value)}
-          className="w-full md:w-44 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-300 focus:outline-none focus:border-amber-500"
+          className="w-full md:w-44 px-3 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
         >
           <option value="">Tất cả hãng xe</option>
           {brands.map((b) => (
@@ -128,7 +136,7 @@ export default function AdminCarsPage() {
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="w-full md:w-40 px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-300 focus:outline-none focus:border-amber-500"
+          className="w-full md:w-40 px-3 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
         >
           <option value="">Tất cả trạng thái</option>
           <option value="available">Sẵn sàng bán</option>
@@ -138,7 +146,7 @@ export default function AdminCarsPage() {
 
         <button
           onClick={fetchCars}
-          className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-medium rounded-lg transition flex items-center gap-2 shrink-0"
+          className="px-4 py-2 bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] border border-[var(--border-subtle)] text-[var(--text-primary)] text-xs font-medium rounded-lg transition flex items-center gap-2 shrink-0"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Lọc
@@ -146,29 +154,29 @@ export default function AdminCarsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl overflow-hidden">
+      <div className="bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg overflow-hidden shadow-xs">
         {loading ? (
           <div className="py-20 flex flex-col items-center justify-center gap-3">
-            <div className="w-7 h-7 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
-            <span className="text-xs text-zinc-400">Đang tải danh sách xe...</span>
+            <div className="w-7 h-7 border-2 border-[var(--brand-gold)] border-t-transparent rounded-full animate-spin" />
+            <span className="text-xs text-[var(--text-muted)]">Đang tải danh sách xe...</span>
           </div>
         ) : cars.length === 0 ? (
           <div className="py-20 text-center space-y-3">
-            <CarFront className="w-10 h-10 text-zinc-600 mx-auto" />
-            <p className="text-sm text-zinc-400">Không tìm thấy chiếc xe nào phù hợp.</p>
+            <CarFront className="w-10 h-10 text-[var(--text-muted)] mx-auto" />
+            <p className="text-sm text-[var(--text-muted)]">Không tìm thấy chiếc xe nào phù hợp.</p>
             <Link
               href="/admin/cars/create"
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-amber-500 text-black text-xs font-semibold rounded-lg hover:bg-amber-400 transition"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-xs font-semibold rounded-lg hover:opacity-90 transition"
             >
               <PlusCircle className="w-3.5 h-3.5" /> Thêm xe đầu tiên
             </Link>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-zinc-300">
-              <thead className="bg-zinc-950/60 text-xs uppercase tracking-wider text-zinc-400 border-b border-zinc-800">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead className="bg-[var(--surface-low)] text-[10px] uppercase tracking-wider text-[var(--text-muted)] border-b border-[var(--border-subtle)] font-semibold">
                 <tr>
-                  <th className="px-5 py-3.5">Xe</th>
+                  <th className="px-5 py-3.5">Xe & Mã kho</th>
                   <th className="px-4 py-3.5">Giá bán</th>
                   <th className="px-4 py-3.5">Năm / ODO</th>
                   <th className="px-4 py-3.5">Kiểu dáng / Nhiên liệu</th>
@@ -177,18 +185,18 @@ export default function AdminCarsPage() {
                   <th className="px-5 py-3.5 text-right">Thao tác</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/60">
+              <tbody className="divide-y divide-[var(--border-subtle)]">
                 {cars.map((car) => {
                   const primaryImg =
                     car.images?.find((img) => img.is_primary)?.image_url ||
                     car.images?.[0]?.image_url;
 
                   return (
-                    <tr key={car.id} className="hover:bg-zinc-800/30 transition">
+                    <tr key={car.id} className="hover:bg-[var(--surface-low)]/50 transition">
                       {/* Car info with image */}
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-16 h-12 rounded-lg bg-zinc-800 overflow-hidden shrink-0 border border-zinc-700/50 flex items-center justify-center">
+                          <div className="w-16 h-12 rounded-lg bg-[var(--surface-low)] overflow-hidden shrink-0 border border-[var(--border-subtle)] flex items-center justify-center">
                             {primaryImg ? (
                               <img
                                 src={primaryImg}
@@ -196,13 +204,13 @@ export default function AdminCarsPage() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <CarFront className="w-5 h-5 text-zinc-600" />
+                              <CarFront className="w-5 h-5 text-[var(--text-muted)]" />
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-white truncate">{car.name}</p>
-                            <p className="text-xs text-zinc-400 mt-0.5 truncate">
-                              Mã kho: {car.stock_code || `#${car.id}`}
+                            <p className="font-semibold text-sm text-[var(--text-primary)] truncate">{car.name}</p>
+                            <p className="text-[11px] font-mono text-[var(--text-muted)] mt-0.5 truncate">
+                              Kho: {car.stock_code || `#${car.id}`}
                             </p>
                           </div>
                         </div>
@@ -210,33 +218,33 @@ export default function AdminCarsPage() {
 
                       {/* Price */}
                       <td className="px-4 py-4">
-                        <div className="font-semibold text-amber-400">
+                        <div className="font-semibold font-mono text-[var(--brand-gold)]">
                           {formatPrice(car.price)}
                         </div>
                         {car.monthly_installment && (
-                          <div className="text-xs text-zinc-400">
+                          <div className="text-[11px] text-[var(--text-muted)] mt-0.5 font-mono">
                             ~{car.monthly_installment.toLocaleString()} đ/th
                           </div>
                         )}
                       </td>
 
                       {/* Year / Odo */}
-                      <td className="px-4 py-4">
-                        <div className="text-zinc-200">{car.year}</div>
-                        <div className="text-xs text-zinc-400">
+                      <td className="px-4 py-4 font-mono">
+                        <div className="text-[var(--text-primary)] font-medium">{car.year}</div>
+                        <div className="text-[11px] text-[var(--text-muted)]">
                           {car.odo_km.toLocaleString()} km
                         </div>
                       </td>
 
                       {/* Specs */}
                       <td className="px-4 py-4">
-                        <div className="text-zinc-200 capitalize">{car.body_type}</div>
-                        <div className="text-xs text-zinc-400 capitalize">{car.fuel_type}</div>
+                        <div className="text-[var(--text-primary)] capitalize font-medium">{car.body_type}</div>
+                        <div className="text-[11px] text-[var(--text-muted)] capitalize">{car.fuel_type}</div>
                       </td>
 
                       {/* Condition */}
                       <td className="px-4 py-4">
-                        <span className="inline-block px-2 py-0.5 rounded text-xs font-medium bg-zinc-800 text-zinc-300">
+                        <span className="inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-low)] border border-[var(--border-subtle)] text-[var(--text-secondary)]">
                           {car.condition === "new" ? "Xe mới 100%" : "Đã qua sử dụng"}
                         </span>
                       </td>
@@ -244,12 +252,12 @@ export default function AdminCarsPage() {
                       {/* Status */}
                       <td className="px-4 py-4">
                         <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider ${
+                          className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${
                             car.status === "available"
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
                               : car.status === "reserved"
-                              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                              : "bg-zinc-800 text-zinc-400"
+                              ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                              : "bg-[var(--surface-low)] text-[var(--text-muted)]"
                           }`}
                         >
                           {car.status === "available"
@@ -264,17 +272,24 @@ export default function AdminCarsPage() {
                       <td className="px-5 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Link
+                            href={`/admin/cars/${car.id}/edit`}
+                            title="Chỉnh sửa thông tin xe"
+                            className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--brand-gold)] hover:bg-[var(--surface-low)] transition"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                          <Link
                             href={`/xe/${car.slug}`}
                             target="_blank"
                             title="Xem trang chi tiết"
-                            className="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition"
+                            className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-low)] transition"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </Link>
                           <button
                             onClick={() => handleDeleteCar(car.id, car.name)}
                             title="Xóa xe"
-                            className="p-1.5 rounded-lg text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition"
+                            className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

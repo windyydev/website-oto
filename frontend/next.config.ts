@@ -17,6 +17,25 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/cars",
+        destination: "/xe",
+        permanent: true,
+      },
+      {
+        source: "/admin/dashboard",
+        destination: "/admin",
+        permanent: true,
+      },
+      {
+        source: "/xe-dang-ban",
+        destination: "/xe",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -21,7 +21,16 @@ class Settings(BaseSettings):
     AWS_REGION: str = "ap-southeast-1"
     AWS_BUCKET_NAME: str = "website-oto-assets"
 
+    # Security & Admin Authentication
+    JWT_SECRET: str = "atelier-curated-automotive-super-secret-key-2026"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_EMAIL: str = "admin@atelier.vn"
+    ADMIN_PASSWORD: str = "Atelier@2026!"
+
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 settings = Settings()

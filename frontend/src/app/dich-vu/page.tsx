@@ -62,11 +62,11 @@ export default function ServicesPage() {
   const { openModal } = useTestDrive();
 
   return (
-    <div className="bg-[#FBFBFA] min-h-screen">
+    <div className="bg-[var(--bg-app)] min-h-screen text-[var(--text-primary)]">
       {/* Hero Banner */}
       <div className="bg-[#121316] text-[#FBFBFA] py-20 border-b border-[#2f3130]">
         <div className="max-w-[1480px] mx-auto px-6 lg:px-12 space-y-4">
-          <span className="text-[11px] font-semibold text-[#9E7D53] uppercase tracking-[0.2em] block">
+          <span className="text-[11px] font-semibold text-[var(--brand-gold)] uppercase tracking-[0.2em] block">
             Atelier Ecosystem
           </span>
           <h1 className="text-3xl sm:text-5xl font-display font-semibold text-white tracking-tight">
@@ -86,33 +86,33 @@ export default function ServicesPage() {
             return (
               <div
                 key={idx}
-                className="bg-white border border-[#EAEAE7] rounded-xl p-8 space-y-6 shadow-sm hover:border-[#9E7D53] transition duration-300 flex flex-col justify-between"
+                className="bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl p-8 space-y-6 shadow-sm hover:border-[var(--brand-gold)] transition duration-300 flex flex-col justify-between"
               >
                 <div className="space-y-4">
-                  <div className="w-12 h-12 rounded-lg bg-[#F4F4F2] flex items-center justify-center text-[#9E7D53]">
+                  <div className="w-12 h-12 rounded-lg bg-[var(--surface-mid)] flex items-center justify-center text-[var(--brand-gold)]">
                     <Icon className="w-6 h-6" />
                   </div>
-                  <h2 className="text-xl font-display font-semibold text-[#121316]">
+                  <h2 className="text-xl font-display font-semibold text-[var(--text-primary)]">
                     {srv.title}
                   </h2>
-                  <p className="text-xs text-[#66686B] leading-relaxed">
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                     {srv.description}
                   </p>
 
-                  <div className="space-y-2 pt-2 border-t border-[#EAEAE7]">
+                  <div className="space-y-2 pt-2 border-t border-[var(--border-subtle)]">
                     {srv.benefits.map((b, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-[#121316]">
-                        <CheckCircle2 className="w-4 h-4 text-[#9E7D53] shrink-0" />
+                      <div key={i} className="flex items-center gap-2 text-xs text-[var(--text-primary)]">
+                        <CheckCircle2 className="w-4 h-4 text-[var(--brand-gold)] shrink-0" />
                         <span>{b}</span>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-[#EAEAE7]">
+                <div className="pt-6 border-t border-[var(--border-subtle)]">
                   <button
                     onClick={() => openModal()}
-                    className="w-full py-2.5 bg-[#121316] hover:bg-[#9E7D53] text-white font-semibold text-xs uppercase tracking-wider rounded transition"
+                    className="w-full py-2.5 bg-[var(--surface-inverted)] hover:bg-[var(--brand-gold)] text-[var(--text-inverted)] hover:text-[#121316] font-semibold text-xs uppercase tracking-wider rounded transition"
                   >
                     Gửi Yêu Cầu Dịch Vụ Này
                   </button>

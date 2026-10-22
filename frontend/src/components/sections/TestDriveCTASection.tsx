@@ -1,7 +1,7 @@
 "use client";
 
 import { useTestDrive } from "@/context/TestDriveContext";
-import { ArrowUpRight, Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowUpRight, Phone, Sparkles } from "lucide-react";
 
 export default function TestDriveCTASection() {
   const { openModal } = useTestDrive();

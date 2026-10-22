@@ -99,9 +99,9 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
 
   if (loading) {
     return (
-      <div className="min-h-screen py-32 flex flex-col items-center justify-center gap-3 bg-[#FBFBFA]">
-        <div className="w-8 h-8 border-2 border-[#9E7D53] border-t-transparent rounded-full animate-spin" />
-        <span className="text-xs text-[#66686B]">Đang tải hồ sơ kỹ thuật xe...</span>
+      <div className="min-h-screen py-32 flex flex-col items-center justify-center gap-3 bg-[var(--bg-app)]">
+        <div className="w-8 h-8 border-2 border-[var(--brand-gold)] border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs text-[var(--text-muted)]">Đang tải hồ sơ kỹ thuật xe...</span>
       </div>
     );
   }
@@ -122,19 +122,19 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
   const currentImage = displayImages[activeImageIndex] || displayImages[0];
 
   return (
-    <div className="bg-[#FBFBFA] min-h-screen pb-28 md:pb-24 text-[#121316]">
+    <div className="bg-[var(--bg-app)] min-h-screen pb-28 md:pb-24 text-[var(--text-primary)]">
       {/* Breadcrumb Bar */}
-      <div className="bg-[#F4F4F2] border-b border-[#EAEAE7] py-4">
-        <div className="max-w-[1480px] mx-auto px-5 lg:px-12 flex items-center justify-between text-xs text-[#66686B]">
+      <div className="bg-[var(--surface-low)] border-b border-[var(--border-subtle)] py-4">
+        <div className="max-w-[1480px] mx-auto px-5 lg:px-12 flex items-center justify-between text-xs text-[var(--text-muted)]">
           <div className="flex items-center gap-1.5 min-w-0">
-            <Link href="/" className="hover:text-[#121316] transition shrink-0">Trang chủ</Link>
-            <ChevronRight className="w-3 h-3 text-[#E2E2DF] shrink-0" />
-            <Link href="/xe" className="hover:text-[#121316] transition shrink-0">Bộ sưu tập</Link>
-            <ChevronRight className="w-3 h-3 text-[#E2E2DF] shrink-0" />
-            <span className="text-[#121316] font-medium truncate">{car.name}</span>
+            <Link href="/" className="hover:text-[var(--text-primary)] transition shrink-0">Trang chủ</Link>
+            <ChevronRight className="w-3 h-3 text-[var(--text-muted)] opacity-60 shrink-0" />
+            <Link href="/xe" className="hover:text-[var(--text-primary)] transition shrink-0">Bộ sưu tập</Link>
+            <ChevronRight className="w-3 h-3 text-[var(--text-muted)] opacity-60 shrink-0" />
+            <span className="text-[var(--text-primary)] font-medium truncate">{car.name}</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 text-[11px] text-[#9E7D53] font-semibold uppercase tracking-wider shrink-0 ml-4">
+          <div className="hidden sm:flex items-center gap-2 text-[11px] text-[var(--brand-gold)] font-semibold uppercase tracking-wider shrink-0 ml-4">
             <span>Mã kho: {car.stock_code || `#${car.id}`}</span>
           </div>
         </div>
@@ -142,21 +142,21 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
 
       <div className="max-w-[1480px] mx-auto px-5 lg:px-12 pt-6 md:pt-8">
         {/* Car Title Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 pb-5 border-b border-[#EAEAE7]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 pb-5 border-b border-[var(--border-subtle)]">
           <div>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               {car.badge && (
-                <span className="px-2.5 py-0.5 rounded bg-[#121316] text-[#9E7D53] text-[10px] font-semibold uppercase tracking-wider">
+                <span className="px-2.5 py-0.5 rounded bg-[var(--brand-primary)] text-[var(--text-inverted)] text-[10px] font-semibold uppercase tracking-wider">
                   {car.badge}
                 </span>
               )}
-              <span className="px-2.5 py-0.5 rounded bg-[#F4F4F2] border border-[#EAEAE7] text-[10px] font-medium text-[#66686B] uppercase">
+              <span className="px-2.5 py-0.5 rounded bg-[var(--surface-low)] border border-[var(--border-subtle)] text-[10px] font-medium text-[var(--text-muted)] uppercase">
                 {car.condition === "new" ? "Xe mới 100%" : "Đã qua sử dụng"}
               </span>
-              <span className="text-xs text-[#66686B]">Năm sản xuất: {car.year}</span>
+              <span className="text-xs text-[var(--text-muted)]">Năm sản xuất: {car.year}</span>
             </div>
 
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-semibold text-[#121316] tracking-tight">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-semibold text-[var(--text-primary)] tracking-tight">
               {car.name}
             </h1>
           </div>
@@ -171,7 +171,7 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
                   alert("Đã sao chép link xe vào bộ nhớ tạm!");
                 }
               }}
-              className="p-2.5 border border-[#EAEAE7] hover:border-[#9E7D53] rounded text-[#66686B] hover:text-[#121316] transition text-xs flex items-center gap-1.5 min-h-[40px]"
+              className="p-2.5 border border-[var(--border-subtle)] hover:border-[var(--brand-gold)] rounded text-[var(--text-muted)] hover:text-[var(--text-primary)] transition text-xs flex items-center gap-1.5 min-h-[40px]"
             >
               <Share2 className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Chia sẻ</span>
@@ -202,8 +202,8 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
                     }}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium transition shrink-0 min-h-[32px] ${
                       activeCategory === tab.id
-                        ? "bg-[#121316] text-white"
-                        : "bg-[#F4F4F2] text-[#66686B] hover:text-[#121316]"
+                        ? "bg-[var(--brand-primary)] text-[var(--text-inverted)]"
+                        : "bg-[var(--surface-low)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     {tab.label}
@@ -213,7 +213,7 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
 
               {/* Main Active Image Viewport with touch swipe */}
               <div
-                className="relative aspect-[16/10] bg-[#121316] rounded-xl overflow-hidden border border-[#EAEAE7] shadow-sm select-none"
+                className="relative aspect-[16/10] bg-[var(--surface-base)] rounded-xl overflow-hidden border border-[var(--border-subtle)] shadow-xs select-none"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
               >
@@ -269,8 +269,8 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
                       onClick={() => setActiveImageIndex(idx)}
                       className={`relative aspect-[4/3] rounded-lg overflow-hidden border transition shrink-0 w-16 sm:w-20 md:w-24 ${
                         activeImageIndex === idx
-                          ? "border-[#9E7D53] ring-2 ring-[#9E7D53]/30"
-                          : "border-[#EAEAE7] opacity-60 hover:opacity-100"
+                          ? "border-[var(--brand-gold)] ring-2 ring-[var(--brand-gold)]/40"
+                          : "border-[var(--border-subtle)] opacity-60 hover:opacity-100"
                       }`}
                     >
                       <img
@@ -285,56 +285,56 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
             </div>
 
             {/* Overview Specs Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 p-4 md:p-5 bg-[#FFFFFF] border border-[#EAEAE7] rounded-xl shadow-sm text-center">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4 p-4 md:p-5 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl shadow-xs text-center">
               <div className="space-y-1">
-                <span className="text-[10px] text-[#66686B] uppercase tracking-wider block">Số Km Đã Đi</span>
-                <span className="text-base font-display font-semibold text-[#121316]">
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Số Km Đã Đi</span>
+                <span className="text-base font-display font-semibold text-[var(--text-primary)]">
                   {car.odo_km.toLocaleString()} km
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] text-[#66686B] uppercase tracking-wider block">Hộp Số</span>
-                <span className="text-base font-display font-semibold text-[#121316]">
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Hộp Số</span>
+                <span className="text-base font-display font-semibold text-[var(--text-primary)]">
                   {car.transmission}
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] text-[#66686B] uppercase tracking-wider block">Nhiên Liệu</span>
-                <span className="text-base font-display font-semibold text-[#121316]">
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Nhiên Liệu</span>
+                <span className="text-base font-display font-semibold text-[var(--text-primary)]">
                   {car.fuel_type}
                 </span>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] text-[#66686B] uppercase tracking-wider block">Hệ Dẫn Động</span>
-                <span className="text-base font-display font-semibold text-[#121316]">
+                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Hệ Dẫn Động</span>
+                <span className="text-base font-display font-semibold text-[var(--text-primary)]">
                   {car.drivetrain}
                 </span>
               </div>
             </div>
 
             {/* Description Narrative */}
-            <div className="p-6 md:p-8 bg-white border border-[#EAEAE7] rounded-xl space-y-4 shadow-sm">
-              <h2 className="text-lg font-display font-semibold text-[#121316]">
+            <div className="p-6 md:p-8 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl space-y-4 shadow-xs">
+              <h2 className="text-lg font-display font-semibold text-[var(--text-primary)]">
                 Tổng Quan & Lịch Sử Xe
               </h2>
-              <div className="text-sm text-[#66686B] leading-relaxed space-y-3 font-light">
+              <div className="text-sm text-[var(--text-secondary)] leading-relaxed space-y-3 font-light">
                 <p>{car.description || "Chiếc xe được thẩm định và nhập khẩu chính ngạch, đáp ứng tiêu chuẩn khắt khe bậc nhất của Atelier Curated Automotive."}</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#EAEAE7]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[var(--border-subtle)]">
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-[#66686B]">Màu ngoại thất:</span>
-                    <strong className="text-[#121316] font-semibold">{car.exterior_color || "Chưa rõ"}</strong>
+                    <span className="text-[var(--text-muted)]">Màu ngoại thất:</span>
+                    <strong className="text-[var(--text-primary)] font-semibold">{car.exterior_color || "Chưa rõ"}</strong>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-[#66686B]">Màu nội thất:</span>
-                    <strong className="text-[#121316] font-semibold">{car.interior || "Chưa rõ"}</strong>
+                    <span className="text-[var(--text-muted)]">Màu nội thất:</span>
+                    <strong className="text-[var(--text-primary)] font-semibold">{car.interior || "Chưa rõ"}</strong>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-[#66686B]">Số lượng chủ cũ:</span>
-                    <strong className="text-[#121316] font-semibold">{car.owners_count === 0 ? "Xe mới chưa qua sử dụng" : `${car.owners_count} đời chủ`}</strong>
+                    <span className="text-[var(--text-muted)]">Số lượng chủ cũ:</span>
+                    <strong className="text-[var(--text-primary)] font-semibold">{car.owners_count === 0 ? "Xe mới chưa qua sử dụng" : `${car.owners_count} đời chủ`}</strong>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-[#66686B]">Bảo hành chính hãng:</span>
-                    <strong className="text-[#121316] font-semibold">{car.has_factory_warranty ? `Còn ${car.warranty_months} tháng` : "Hết hạn"}</strong>
+                    <span className="text-[var(--text-muted)]">Bảo hành chính hãng:</span>
+                    <strong className="text-[var(--text-primary)] font-semibold">{car.has_factory_warranty ? `Còn ${car.warranty_months} tháng` : "Hết hạn"}</strong>
                   </div>
                 </div>
               </div>
@@ -342,15 +342,15 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
 
             {/* Technical Specifications */}
             {car.specs && car.specs.length > 0 && (
-              <div className="p-6 md:p-8 bg-white border border-[#EAEAE7] rounded-xl space-y-5 shadow-sm">
-                <h2 className="text-lg font-display font-semibold text-[#121316]">
+              <div className="p-6 md:p-8 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl space-y-5 shadow-xs">
+                <h2 className="text-lg font-display font-semibold text-[var(--text-primary)]">
                   Thông Số Kỹ Thuật Động Cơ & Vận Hành
                 </h2>
-                <div className="divide-y divide-[#EAEAE7] text-xs">
+                <div className="divide-y divide-[var(--border-subtle)] text-xs">
                   {car.specs.map((item: any, idx: number) => (
                     <div key={idx} className="py-3 flex items-center justify-between">
-                      <span className="text-[#66686B]">{item.label}</span>
-                      <span className="font-mono font-medium text-[#121316]">{item.value}</span>
+                      <span className="text-[var(--text-muted)]">{item.label}</span>
+                      <span className="font-mono font-medium text-[var(--text-primary)]">{item.value}</span>
                     </div>
                   ))}
                 </div>
@@ -358,38 +358,38 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
             )}
 
             {/* Inspection Report Card */}
-            <div className="p-6 md:p-8 bg-[#F4F4F2] border border-[#EAEAE7] rounded-xl space-y-5">
+            <div className="p-6 md:p-8 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-xl space-y-5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#9E7D53] block">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[var(--brand-gold)] block">
                     Verified Quality
                   </span>
-                  <h2 className="text-lg font-display font-semibold text-[#121316] mt-0.5">
+                  <h2 className="text-lg font-display font-semibold text-[var(--text-primary)] mt-0.5">
                     Biên Bản Thẩm Định 150 Điểm
                   </h2>
                 </div>
-                <div className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 text-xs font-semibold flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
+                <div className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold flex items-center gap-1.5 shrink-0 self-start sm:self-auto">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>150/150 Tiêu Chuẩn Đạt</span>
                 </div>
               </div>
 
-              <p className="text-xs text-[#66686B] leading-relaxed">
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                 Chiếc xe đã vượt qua 100% các bài kiểm tra thực nghiệm: Khung gầm unibody nguyên bản không biến dạng, hệ thống động cơ chưa từng tháo rã hay thủy kích, hệ thống phanh và điện tử vận hành hoàn hảo.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
-                <div className="p-3 bg-white rounded border border-[#EAEAE7] space-y-1">
-                  <span className="text-[11px] font-semibold text-[#121316] block">Thân vỏ & Khung</span>
-                  <span className="text-[11px] text-emerald-600 flex items-center gap-1">✓ Sơn zin nguyên bản</span>
+                <div className="p-3 bg-[var(--surface-base)] rounded border border-[var(--border-subtle)] space-y-1">
+                  <span className="text-[11px] font-semibold text-[var(--text-primary)] block">Thân vỏ & Khung</span>
+                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">✓ Sơn zin nguyên bản</span>
                 </div>
-                <div className="p-3 bg-white rounded border border-[#EAEAE7] space-y-1">
-                  <span className="text-[11px] font-semibold text-[#121316] block">Động cơ & Hộp số</span>
-                  <span className="text-[11px] text-emerald-600 flex items-center gap-1">✓ Không thủy kích</span>
+                <div className="p-3 bg-[var(--surface-base)] rounded border border-[var(--border-subtle)] space-y-1">
+                  <span className="text-[11px] font-semibold text-[var(--text-primary)] block">Động cơ & Hộp số</span>
+                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">✓ Không thủy kích</span>
                 </div>
-                <div className="p-3 bg-white rounded border border-[#EAEAE7] space-y-1">
-                  <span className="text-[11px] font-semibold text-[#121316] block">Hệ thống điện tử</span>
-                  <span className="text-[11px] text-emerald-600 flex items-center gap-1">✓ 0 mã lỗi ECU</span>
+                <div className="p-3 bg-[var(--surface-base)] rounded border border-[var(--border-subtle)] space-y-1">
+                  <span className="text-[11px] font-semibold text-[var(--text-primary)] block">Hệ thống điện tử</span>
+                  <span className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">✓ 0 mã lỗi ECU</span>
                 </div>
               </div>
             </div>
@@ -397,17 +397,17 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
 
           {/* Right Column: Sticky Pricing & Action Box (desktop only) */}
           <div className="hidden lg:block lg:col-span-1 lg:sticky lg:top-24 space-y-6">
-            <div className="bg-[#FFFFFF] border border-[#EAEAE7] rounded-xl p-6 shadow-md space-y-6">
+            <div className="bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl p-6 shadow-md space-y-6">
               {/* Price */}
-              <div className="space-y-1 pb-4 border-b border-[#EAEAE7]">
-                <span className="text-[11px] text-[#66686B] uppercase tracking-wider block">
+              <div className="space-y-1 pb-4 border-b border-[var(--border-subtle)]">
+                <span className="text-[11px] text-[var(--text-muted)] uppercase tracking-wider block">
                   Giá Chuyển Nhượng Niêm Yết
                 </span>
-                <div className="text-3xl font-display font-bold text-[#121316]">
+                <div className="text-3xl font-display font-bold text-[var(--text-primary)]">
                   {formatPrice(car.price)}
                 </div>
                 {car.monthly_installment && (
-                  <div className="text-xs text-[#9E7D53] font-medium pt-1">
+                  <div className="text-xs text-[var(--brand-gold)] font-medium pt-1">
                     Ước tính trả góp: ~{(car.monthly_installment / 1_000_000).toFixed(0)} triệu / tháng
                   </div>
                 )}
@@ -417,40 +417,40 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
               <div className="space-y-3">
                 <button
                   onClick={() => openModal({ id: car.id, name: car.name })}
-                  className="w-full py-3.5 bg-[#121316] hover:bg-[#121316]/90 text-white font-semibold text-xs uppercase tracking-wider rounded transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] font-semibold text-xs uppercase tracking-wider rounded transition shadow-md flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-4 h-4 text-[#9E7D53]" />
+                  <Sparkles className="w-4 h-4 text-[var(--brand-gold)]" />
                   <span>Đặt Lịch Lái Thử Riêng Tư</span>
                 </button>
 
                 <a
                   href="tel:0908123456"
-                  className="w-full py-3 bg-[#F4F4F2] hover:bg-[#EAEAE7] text-[#121316] font-semibold text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] text-[var(--text-primary)] border border-[var(--border-subtle)] font-semibold text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-2"
                 >
-                  <Phone className="w-4 h-4 text-[#9E7D53]" />
+                  <Phone className="w-4 h-4 text-[var(--brand-gold)]" />
                   <span>Gọi Tư Vấn Ngay: 0908 123 456</span>
                 </a>
               </div>
 
               {/* Security Commitments */}
-              <div className="space-y-2.5 pt-4 border-t border-[#EAEAE7] text-xs text-[#66686B]">
+              <div className="space-y-2.5 pt-4 border-t border-[var(--border-subtle)] text-xs text-[var(--text-muted)]">
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-[#9E7D53] shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-[var(--brand-gold)] shrink-0" />
                   <span>Cam kết thu mua lại xe với khấu hao tối thiểu</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#9E7D53] shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-[var(--brand-gold)] shrink-0" />
                   <span>Giao dịch bảo mật thông tin tuyệt đối</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#9E7D53] shrink-0" />
+                  <Clock className="w-4 h-4 text-[var(--brand-gold)] shrink-0" />
                   <span>Hoàn tất thủ tục sang tên trong ngày</span>
                 </div>
               </div>
 
               {/* Assigned Curator Card */}
-              <div className="p-4 bg-[#F4F4F2] rounded-lg border border-[#EAEAE7] flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full overflow-hidden bg-zinc-300 shrink-0 border border-[#9E7D53]">
+              <div className="p-4 bg-[var(--surface-low)] rounded-lg border border-[var(--border-subtle)] flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-zinc-300 shrink-0 border border-[var(--brand-gold)]">
                   <img
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
                     alt="Curator"
@@ -458,11 +458,11 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
                   />
                 </div>
                 <div className="min-w-0">
-                  <span className="text-[10px] text-[#9E7D53] font-semibold uppercase tracking-wider block">
+                  <span className="text-[10px] text-[var(--brand-gold)] font-semibold uppercase tracking-wider block">
                     Giám Đốc Thẩm Định
                   </span>
-                  <p className="text-xs font-semibold text-[#121316] truncate">Trần Minh Quân</p>
-                  <p className="text-[11px] text-[#66686B]">0908 123 456</p>
+                  <p className="text-xs font-semibold text-[var(--text-primary)] truncate">Trần Minh Quân</p>
+                  <p className="text-[11px] text-[var(--text-muted)]">0908 123 456</p>
                 </div>
               </div>
             </div>
@@ -471,19 +471,19 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
 
         {/* Similar Cars Section */}
         {similarCars.length > 0 && (
-          <div className="mt-16 md:mt-24 pt-12 md:pt-16 border-t border-[#EAEAE7] space-y-8">
+          <div className="mt-16 md:mt-24 pt-12 md:pt-16 border-t border-[var(--border-subtle)] space-y-8">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-[11px] font-semibold text-[#9E7D53] uppercase tracking-[0.2em] block">
+                <span className="text-[11px] font-semibold text-[var(--brand-gold)] uppercase tracking-[0.2em] block">
                   Cùng Phân Khúc
                 </span>
-                <h3 className="text-xl md:text-2xl font-display font-semibold text-[#121316] tracking-tight mt-0.5">
+                <h3 className="text-xl md:text-2xl font-display font-semibold text-[var(--text-primary)] tracking-tight mt-0.5">
                   Các Mẫu Xe Tương Tự
                 </h3>
               </div>
               <Link
                 href="/xe"
-                className="text-xs font-semibold uppercase tracking-wider text-[#121316] hover:text-[#9E7D53] transition flex items-center gap-1"
+                className="text-xs font-semibold uppercase tracking-wider text-[var(--text-primary)] hover:text-[var(--brand-gold)] transition flex items-center gap-1"
               >
                 <span>Xem tất cả</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -500,12 +500,12 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
       </div>
 
       {/* ─── Mobile Sticky CTA Bar (fixed bottom, hidden on lg+) ─── */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#FBFBFA]/95 backdrop-blur-md border-t border-[#EAEAE7] shadow-[0_-4px_24px_rgba(0,0,0,0.08)]">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-[var(--bg-app)]/95 backdrop-blur-md border-t border-[var(--border-subtle)] shadow-[0_-4px_24px_rgba(0,0,0,0.08)]">
         <div className="px-4 py-3 flex items-center gap-3">
           {/* Price mini-display */}
           <div className="flex-1 min-w-0">
-            <span className="text-[10px] text-[#66686B] uppercase tracking-wider block">Giá niêm yết</span>
-            <span className="text-lg font-display font-bold text-[#121316] leading-tight">
+            <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Giá niêm yết</span>
+            <span className="text-lg font-display font-bold text-[var(--text-primary)] leading-tight">
               {formatPrice(car.price)}
             </span>
           </div>
@@ -513,18 +513,18 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
           {/* Call button */}
           <a
             href="tel:0908123456"
-            className="flex items-center justify-center gap-1.5 px-4 py-3 bg-[#F4F4F2] border border-[#EAEAE7] text-[#121316] font-semibold text-xs rounded-xl min-w-[80px] min-h-[52px]"
+            className="flex items-center justify-center gap-1.5 px-4 py-3 bg-[var(--surface-low)] border border-[var(--border-subtle)] text-[var(--text-primary)] font-semibold text-xs rounded-xl min-w-[80px] min-h-[52px]"
           >
-            <Phone className="w-4 h-4 text-[#9E7D53]" />
+            <Phone className="w-4 h-4 text-[var(--brand-gold)]" />
             <span>Gọi</span>
           </a>
 
           {/* Test drive button */}
           <button
             onClick={() => openModal({ id: car.id, name: car.name })}
-            className="flex items-center justify-center gap-1.5 px-5 py-3 bg-[#121316] hover:bg-[#121316]/90 text-white font-semibold text-xs rounded-xl flex-1 min-h-[52px]"
+            className="flex items-center justify-center gap-1.5 px-5 py-3 bg-[var(--brand-primary)] text-[var(--text-inverted)] font-semibold text-xs rounded-xl flex-1 min-h-[52px]"
           >
-            <Sparkles className="w-4 h-4 text-[#9E7D53]" />
+            <Sparkles className="w-4 h-4 text-[var(--brand-gold)]" />
             <span>Đặt Lịch Lái Thử</span>
           </button>
         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Tag, Plus, Trash2, Globe, AlertCircle, Check } from "lucide-react";
+import { Tag, Plus, Trash2, AlertCircle } from "lucide-react";
 import { adminApi, Brand } from "@/lib/api";
 
 function slugify(text: string) {
@@ -59,11 +59,12 @@ export default function AdminBrandsPage() {
       setError(null);
       await adminApi.createBrand({
         name: name.trim(),
-        slug: slug.trim() || slugify(name),
-        country: country.trim(),
+        slug: slug.trim(),
+        country: country.trim() || undefined,
         logo_url: logoUrl.trim() || undefined,
       });
 
+      // Reset form
       setName("");
       setSlug("");
       setLogoUrl("");
@@ -87,25 +88,32 @@ export default function AdminBrandsPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Quản Lý Thương Hiệu</h1>
-        <p className="text-sm text-zinc-400 mt-1">
-          Khai báo các hãng xe đối tác phân phối tại Showroom.
+      <div className="pb-4 border-b border-[var(--border-subtle)]">
+        <div className="flex items-center gap-2 text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-1">
+          <span>BẢNG ĐIỀU KHIỂN</span>
+          <span>•</span>
+          <span className="text-[var(--brand-gold)]">DANH MỤC THƯƠNG HIỆU</span>
+        </div>
+        <h1 className="font-display text-2xl lg:text-3xl font-semibold tracking-tight text-[var(--text-primary)]">
+          Quản Lý Thương Hiệu & Hãng Xe
+        </h1>
+        <p className="text-xs text-[var(--text-muted)] mt-1">
+          Khai báo các hãng xe đối tác phân phối chính thức tại Showroom Atelier.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Form: Add Brand */}
-        <div className="p-5 bg-zinc-900/80 border border-zinc-800 rounded-xl space-y-4 h-fit">
-          <h2 className="text-base font-semibold text-white flex items-center gap-2">
-            <Plus className="w-4 h-4 text-amber-400" />
+        <div className="p-5 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg space-y-4 h-fit shadow-xs">
+          <h2 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
+            <Plus className="w-4 h-4 text-[var(--brand-gold)]" />
             Thêm Hãng Xe Mới
           </h2>
 
           {error && (
-            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-400 flex items-center gap-2">
+            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-xs text-red-500 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -113,99 +121,110 @@ export default function AdminBrandsPage() {
 
           <form onSubmit={handleCreateBrand} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Tên hãng xe</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Tên hãng xe</label>
               <input
                 type="text"
                 required
                 placeholder="VD: Porsche, Mercedes-Benz..."
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Slug</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Slug URL</label>
               <input
                 type="text"
                 required
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
-                className="w-full px-3 py-1.5 bg-zinc-950/70 border border-zinc-800 rounded-lg text-xs text-zinc-400 font-mono focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-1.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-muted)] font-mono focus:outline-none focus:border-[var(--brand-gold)] transition"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Quốc gia xuất xứ</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Quốc gia xuất xứ</label>
               <input
                 type="text"
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
                 placeholder="VD: Đức, Nhật Bản, Ý..."
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Logo URL (tuỳ chọn)</label>
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Logo URL (tuỳ chọn)</label>
               <input
                 type="url"
                 value={logoUrl}
                 onChange={(e) => setLogoUrl(e.target.value)}
                 placeholder="https://..."
-                className="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-sm text-zinc-100 focus:outline-none focus:border-amber-500"
+                className="w-full px-3 py-2 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-gold)] transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-semibold text-sm rounded-lg transition disabled:opacity-50"
+              className="w-full py-2.5 bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] text-xs font-semibold rounded-lg transition disabled:opacity-50 shadow-sm"
             >
-              {submitting ? "Đang tạo..." : "Thêm Thương Hiệu"}
+              {submitting ? "Đang lưu..." : "Lưu Hãng Xe"}
             </button>
           </form>
         </div>
 
-        {/* Right List: Brands Table */}
-        <div className="lg:col-span-2 bg-zinc-900/80 border border-zinc-800 rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
-            <span className="text-sm font-semibold text-white">
-              Danh Sách Thương Hiệu ({brands.length})
-            </span>
+        {/* Right List: Brands */}
+        <div className="lg:col-span-2 space-y-3">
+          <div className="flex items-center justify-between pb-2">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              Danh Sách Hãng Xe ({brands.length})
+            </h2>
           </div>
 
           {loading ? (
-            <div className="py-16 text-center text-xs text-zinc-500">Đang tải...</div>
+            <div className="py-20 flex flex-col items-center justify-center gap-2">
+              <div className="w-6 h-6 border-2 border-[var(--brand-gold)] border-t-transparent rounded-full animate-spin" />
+              <span className="text-xs text-[var(--text-muted)]">Đang tải thương hiệu...</span>
+            </div>
           ) : brands.length === 0 ? (
-            <div className="py-16 text-center text-xs text-zinc-500">
-              Chưa có thương hiệu nào. Hãy tạo thương hiệu đầu tiên ở form bên trái!
+            <div className="p-8 text-center bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-muted)]">
+              Chưa có thương hiệu nào. Hãy tạo thương hiệu đầu tiên bên trái.
             </div>
           ) : (
-            <div className="divide-y divide-zinc-800/60">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {brands.map((b) => (
-                <div key={b.id} className="p-4 flex items-center justify-between hover:bg-zinc-800/20 transition">
+                <div
+                  key={b.id}
+                  className="p-4 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg flex items-center justify-between hover:border-[var(--brand-gold)] transition shadow-xs group"
+                >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-zinc-800 border border-zinc-700/60 flex items-center justify-center text-amber-400 font-bold overflow-hidden">
+                    <div className="w-10 h-10 rounded-lg bg-[var(--surface-low)] border border-[var(--border-subtle)] flex items-center justify-center shrink-0">
                       {b.logo_url ? (
-                        <img src={b.logo_url} alt={b.name} className="w-full h-full object-contain p-1" />
+                        <img src={b.logo_url} alt={b.name} className="w-6 h-6 object-contain" />
                       ) : (
-                        b.name.charAt(0)
+                        <Tag className="w-5 h-5 text-[var(--brand-gold)]" />
                       )}
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-white">{b.name}</h4>
-                      <p className="text-xs text-zinc-400 flex items-center gap-1.5 mt-0.5">
-                        <Globe className="w-3 h-3 text-zinc-500" />
-                        {b.country || "Chưa rõ"} • <span className="font-mono text-zinc-500">{b.slug}</span>
-                      </p>
+                      <h3 className="font-semibold text-sm text-[var(--text-primary)]">{b.name}</h3>
+                      <div className="flex items-center gap-2 mt-0.5 text-[11px] text-[var(--text-muted)]">
+                        <span className="font-mono text-[10px]">/{b.slug}</span>
+                        {b.country && (
+                          <>
+                            <span>•</span>
+                            <span>{b.country}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
 
                   <button
                     onClick={() => handleDeleteBrand(b.id, b.name)}
-                    className="p-2 text-zinc-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
-                    title="Xóa thương hiệu"
+                    className="p-1.5 text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 rounded-lg transition opacity-60 group-hover:opacity-100"
+                    title="Xóa hãng"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

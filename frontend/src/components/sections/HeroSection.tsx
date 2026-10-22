@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTestDrive } from "@/context/TestDriveContext";
-import { Search, ArrowRight, ShieldCheck, Sparkles, ChevronRight } from "lucide-react";
+import { Search, ArrowRight, Sparkles } from "lucide-react";
 import { adminApi, Brand } from "@/lib/api";
 
 export default function HeroSection() {

@@ -9,6 +9,17 @@ export const api = axios.create({
   },
 });
 
+// Gắn JWT token vào Header nếu đã đăng nhập
+api.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("atelier_admin_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 // Types
 export interface Brand {
   id: number;
@@ -68,6 +79,20 @@ export interface Lead {
   interested_car_id?: number;
   interested_car_name?: string;
   created_at: string;
+}
+
+export interface TestDrive {
+  id: number;
+  booking_code: string;
+  status: string;
+  appointment_date: string;
+  time_slot: string;
+  lead_id: number;
+  car_id: number;
+  car_name?: string;
+  customer_name?: string;
+  customer_phone?: string;
+  notes?: string;
 }
 
 export interface StatsResponse {
@@ -169,8 +194,61 @@ export const adminApi = {
     const res = await api.patch(`/leads/${id}/status`, { status });
     return res.data;
   },
-  getTestDrives: async () => {
+  getTestDrives: async (): Promise<TestDrive[]> => {
     const res = await api.get("/leads/test-drives");
     return res.data;
+  },
+};
+
+export interface AdminUser {
+  username: string;
+  email: string;
+  name: string;
+  role: string;
+}
+
+export interface LoginResponse {
+  access_token: string;
+  token_type: string;
+  user: AdminUser;
+}
+
+export const authApi = {
+  login: async (credentials: { username: string; password: string }): Promise<LoginResponse> => {
+    const res = await api.post("/auth/login", credentials);
+    if (res.data?.access_token && typeof window !== "undefined") {
+      localStorage.setItem("atelier_admin_token", res.data.access_token);
+      localStorage.setItem("atelier_admin_user", JSON.stringify(res.data.user));
+    }
+    return res.data;
+  },
+  getMe: async (): Promise<AdminUser> => {
+    const res = await api.get("/auth/me");
+    return res.data;
+  },
+  logout: () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("atelier_admin_token");
+      localStorage.removeItem("atelier_admin_user");
+    }
+  },
+  getToken: (): string | null => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("atelier_admin_token");
+    }
+    return null;
+  },
+  getUser: (): AdminUser | null => {
+    if (typeof window !== "undefined") {
+      const userStr = localStorage.getItem("atelier_admin_user");
+      if (userStr) {
+        try {
+          return JSON.parse(userStr);
+        } catch {
+          return null;
+        }
+      }
+    }
+    return null;
   },
 };
