@@ -27,16 +27,16 @@ export default function HeroSection() {
     if (brandId) params.set("brand_id", brandId);
     if (bodyType) params.set("body_type", bodyType);
     if (priceRange) {
-      if (priceRange === "under_5b") params.set("max_price", "5000000000");
-      if (priceRange === "5b_10b") {
-        params.set("min_price", "5000000000");
-        params.set("max_price", "10000000000");
+      if (priceRange === "under_500m") params.set("max_price", "500000000");
+      if (priceRange === "500m_800m") {
+        params.set("min_price", "500000000");
+        params.set("max_price", "800000000");
       }
-      if (priceRange === "10b_20b") {
-        params.set("min_price", "10000000000");
-        params.set("max_price", "20000000000");
+      if (priceRange === "800m_1b2") {
+        params.set("min_price", "800000000");
+        params.set("max_price", "1200000000");
       }
-      if (priceRange === "above_20b") params.set("min_price", "20000000000");
+      if (priceRange === "above_1b2") params.set("min_price", "1200000000");
     }
     router.push(`/xe?${params.toString()}`);
   };
@@ -131,10 +131,10 @@ export default function HeroSection() {
               className="w-full bg-[#121316] border border-[#2f3130] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#9E7D53]"
             >
               <option value="">Tất cả mức giá</option>
-              <option value="under_5b">Dưới 5 tỷ VNĐ</option>
-              <option value="5b_10b">Từ 5 tỷ - 10 tỷ VNĐ</option>
-              <option value="10b_20b">Từ 10 tỷ - 20 tỷ VNĐ</option>
-              <option value="above_20b">Trên 20 tỷ VNĐ</option>
+              <option value="under_500m">Dưới 500 triệu</option>
+              <option value="500m_800m">Từ 500 - 800 triệu</option>
+              <option value="800m_1b2">Từ 800 triệu - 1.2 tỷ</option>
+              <option value="above_1b2">Trên 1.2 tỷ</option>
             </select>
           </div>
 
@@ -149,10 +149,11 @@ export default function HeroSection() {
               className="w-full bg-[#121316] border border-[#2f3130] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-[#9E7D53]"
             >
               <option value="">Tất cả kiểu dáng</option>
-              <option value="Coupe">Coupe Thể Thao</option>
-              <option value="SUV">SUV Đô Thị & Địa Hình</option>
-              <option value="Sedan">Sedan Sang Trọng</option>
-              <option value="Convertible">Mui Trần (Convertible)</option>
+              <option value="Sedan">Sedan Đô Thị & Gia Đình</option>
+              <option value="SUV">SUV & CUV Gầm Cao</option>
+              <option value="MPV">MPV 7 Chỗ Gia Đình</option>
+              <option value="Bán tải">Bán Tải (Pickup)</option>
+              <option value="Hatchback">Hatchback Đô Thị Nhỏ Gọn</option>
             </select>
           </div>
 

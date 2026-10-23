@@ -2,9 +2,15 @@
 
 import React, { createContext, useContext, useState } from "react";
 
-interface TestDriveCar {
+export interface TestDriveCar {
   id: number;
   name: string;
+  configDetails?: {
+    colorName?: string;
+    atelierCode?: string;
+    totalPrice?: number;
+    optionsCount?: number;
+  };
 }
 
 interface TestDriveContextType {

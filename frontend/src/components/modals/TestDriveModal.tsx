@@ -33,6 +33,11 @@ export default function TestDriveModal() {
 
       if (selectedCar) {
         setCarId(selectedCar.id);
+        if (selectedCar.configDetails) {
+          const { atelierCode, colorName, totalPrice, optionsCount } = selectedCar.configDetails;
+          const formattedPrice = totalPrice ? `${(totalPrice / 1_000_000_000).toFixed(2)} tỷ` : "";
+          setNotes(`[Cấu hình Atelier: ${atelierCode || "Bespoke"}] Màu: ${colorName || "Tiêu chuẩn"}${optionsCount ? `, ${optionsCount} gói trang bị nâng cấp` : ""}${formattedPrice ? ` (Dự toán: ~${formattedPrice})` : ""}`);
+        }
       } else {
         adminApi.getCars({ page_size: 50, status: "available" }).then((res) => {
           setCars(res.items || []);
@@ -148,8 +153,32 @@ export default function TestDriveModal() {
                   Mẫu xe bạn muốn trải nghiệm <span className="text-[var(--brand-gold)]">*</span>
                 </label>
                 {selectedCar ? (
-                  <div className="px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm font-semibold text-[var(--brand-gold)]">
-                    {selectedCar.name}
+                  <div className="space-y-2">
+                    <div className="px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-sm font-semibold text-[var(--brand-gold)]">
+                      {selectedCar.name}
+                    </div>
+                    {selectedCar.configDetails && (
+                      <div className="p-3 bg-[var(--surface-low)] rounded-lg border border-[var(--brand-gold)]/30 space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] uppercase font-mono tracking-wider font-semibold text-[var(--brand-gold)]">
+                            Mã Cấu Hình: {selectedCar.configDetails.atelierCode}
+                          </span>
+                          {selectedCar.configDetails.totalPrice && (
+                            <span className="font-mono font-bold text-[var(--text-primary)]">
+                              {(selectedCar.configDetails.totalPrice / 1_000_000_000).toFixed(2)} tỷ VND
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-[var(--text-secondary)] flex items-center gap-4 flex-wrap">
+                          {selectedCar.configDetails.colorName && (
+                            <span>Màu sơn: <strong className="text-[var(--text-primary)] font-medium">{selectedCar.configDetails.colorName}</strong></span>
+                          )}
+                          {selectedCar.configDetails.optionsCount !== undefined && (
+                            <span>Trang bị: <strong className="text-[var(--text-primary)] font-medium">{selectedCar.configDetails.optionsCount} tùy chọn</strong></span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <select

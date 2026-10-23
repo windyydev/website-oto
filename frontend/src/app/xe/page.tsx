@@ -13,14 +13,25 @@ import {
   X,
   SlidersHorizontal
 } from "lucide-react";
-import { adminApi, Car, Brand } from "@/lib/api";
+import { adminApi, Car, Brand, Category } from "@/lib/api";
 import CarCard from "@/components/car/CarCard";
 import { FilterPanel } from "@/components/filters/FilterPanel";
 import { useTestDrive } from "@/context/TestDriveContext";
 
+function findCategoryInTree(categories: Category[], id: number): Category | null {
+  for (const cat of categories) {
+    if (cat.id === id) return cat;
+    if (cat.children) {
+      const found = findCategoryInTree(cat.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 // ─── Active filter count badge ────────────────────────────────────────────────
-function activeFilterCount(brand: string, body: string, search: string) {
-  return [brand, body, search].filter(Boolean).length;
+function activeFilterCount(brand: string, body: string, search: string, category: string) {
+  return [brand, body, search, category].filter(Boolean).length;
 }
 
 // ─── Main catalog component ───────────────────────────────────────────────────
@@ -31,12 +42,14 @@ function CarCollectionContent() {
 
   const [cars, setCars] = useState<Car[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
 
   // Filter States
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [selectedBrand, setSelectedBrand] = useState(searchParams.get("brand_id") || "");
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category_id") || "");
   const [selectedBodyType, setSelectedBodyType] = useState(searchParams.get("body_type") || "");
   const [selectedCondition, setSelectedCondition] = useState(searchParams.get("condition") || "");
   const [sort, setSort] = useState(searchParams.get("sort") || "newest");
@@ -48,6 +61,7 @@ function CarCollectionContent() {
 
   useEffect(() => {
     adminApi.getBrands().then((res) => setBrands(res)).catch(() => {});
+    adminApi.getCategoryTree().then((res) => setCategories(res)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -63,6 +77,7 @@ function CarCollectionContent() {
       };
       if (searchParams.get("search")) params.search = searchParams.get("search");
       if (searchParams.get("brand_id")) params.brand_id = Number(searchParams.get("brand_id"));
+      if (searchParams.get("category_id")) params.category_id = Number(searchParams.get("category_id"));
       if (searchParams.get("body_type")) params.body_type = searchParams.get("body_type");
       if (searchParams.get("min_price")) params.min_price = Number(searchParams.get("min_price"));
       if (searchParams.get("max_price")) params.max_price = Number(searchParams.get("max_price"));
@@ -80,12 +95,14 @@ function CarCollectionContent() {
   const applyFilters = (overrides?: any) => {
     const params = new URLSearchParams();
     const brand = overrides?.brand !== undefined ? overrides.brand : selectedBrand;
+    const category = overrides?.category !== undefined ? overrides.category : selectedCategory;
     const body = overrides?.body !== undefined ? overrides.body : selectedBodyType;
     const s = overrides?.search !== undefined ? overrides.search : search;
     const st = overrides?.sort !== undefined ? overrides.sort : sort;
 
     if (s) params.set("search", s);
     if (brand) params.set("brand_id", brand);
+    if (category) params.set("category_id", category);
     if (body) params.set("body_type", body);
     if (st) params.set("sort", st);
 
@@ -95,6 +112,7 @@ function CarCollectionContent() {
   const handleResetFilters = () => {
     setSearch("");
     setSelectedBrand("");
+    setSelectedCategory("");
     setSelectedBodyType("");
     setSelectedCondition("");
     setPriceRange("");
@@ -102,7 +120,8 @@ function CarCollectionContent() {
     router.push("/xe");
   };
 
-  const filterCount = activeFilterCount(selectedBrand, selectedBodyType, search);
+  const filterCount = activeFilterCount(selectedBrand, selectedBodyType, search, selectedCategory);
+  const activeCategoryObj = selectedCategory ? findCategoryInTree(categories, Number(selectedCategory)) : null;
 
   return (
     <div className="bg-[var(--bg-app)] min-h-screen pb-24 relative">
@@ -142,6 +161,9 @@ function CarCollectionContent() {
             setSearch={setSearch}
             selectedBrand={selectedBrand}
             setSelectedBrand={setSelectedBrand}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            categories={categories}
             selectedBodyType={selectedBodyType}
             setSelectedBodyType={setSelectedBodyType}
             brands={brands}
@@ -156,10 +178,16 @@ function CarCollectionContent() {
       <div className="bg-[var(--surface-low)] border-b border-[var(--border-subtle)] py-6 md:py-8">
         <div className="max-w-[1480px] mx-auto px-5 lg:px-12">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)] mb-3">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)] mb-3 flex-wrap">
             <Link href="/" className="hover:text-[var(--text-primary)] transition">Trang chủ</Link>
             <ChevronRight className="w-3 h-3 text-[var(--text-muted)] opacity-60" />
-            <span className="text-[var(--text-primary)] font-medium">Bộ sưu tập xe</span>
+            <Link href="/xe" className="hover:text-[var(--text-primary)] transition">Bộ sưu tập xe</Link>
+            {activeCategoryObj && (
+              <>
+                <ChevronRight className="w-3 h-3 text-[var(--text-muted)] opacity-60" />
+                <span className="text-[var(--text-primary)] font-medium">{activeCategoryObj.name}</span>
+              </>
+            )}
           </div>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-3">
@@ -188,6 +216,9 @@ function CarCollectionContent() {
               setSearch={setSearch}
               selectedBrand={selectedBrand}
               setSelectedBrand={setSelectedBrand}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              categories={categories}
               selectedBodyType={selectedBodyType}
               setSelectedBodyType={setSelectedBodyType}
               brands={brands}
@@ -239,13 +270,34 @@ function CarCollectionContent() {
               </div>
             </div>
 
-            {/* Active filters indicator (mobile only) */}
+            {/* Active filters indicator (both desktop & mobile) */}
             {filterCount > 0 && (
-              <div className="lg:hidden flex items-center gap-2 flex-wrap">
-                {selectedBrand && brands.find(b => String(b.id) === selectedBrand) && (
+              <div className="flex items-center gap-2 flex-wrap pt-1">
+                {activeCategoryObj && (
+                  <span className="px-3 py-1 bg-[var(--brand-gold)] text-black font-semibold text-[11px] rounded-full flex items-center gap-1.5 shadow-xs">
+                    <span>Phân khúc: {activeCategoryObj.name}</span>
+                    <button
+                      onClick={() => {
+                        setSelectedCategory("");
+                        applyFilters({ category: "" });
+                      }}
+                      className="hover:opacity-75 cursor-pointer"
+                      title="Bỏ lọc phân khúc"
+                    >
+                      <X className="w-3 h-3 text-black" />
+                    </button>
+                  </span>
+                )}
+                {selectedBrand && brands.find((b) => String(b.id) === selectedBrand) && (
                   <span className="px-3 py-1 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-[11px] rounded-full flex items-center gap-1.5">
-                    {brands.find(b => String(b.id) === selectedBrand)?.name}
-                    <button onClick={() => { setSelectedBrand(""); applyFilters({ brand: "" }); }} className="hover:text-[var(--brand-gold)]">
+                    {brands.find((b) => String(b.id) === selectedBrand)?.name}
+                    <button
+                      onClick={() => {
+                        setSelectedBrand("");
+                        applyFilters({ brand: "" });
+                      }}
+                      className="hover:text-[var(--brand-gold)] cursor-pointer"
+                    >
                       <X className="w-3 h-3" />
                     </button>
                   </span>
@@ -253,7 +305,13 @@ function CarCollectionContent() {
                 {selectedBodyType && (
                   <span className="px-3 py-1 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-[11px] rounded-full flex items-center gap-1.5">
                     {selectedBodyType}
-                    <button onClick={() => { setSelectedBodyType(""); applyFilters({ body: "" }); }} className="hover:text-[var(--brand-gold)]">
+                    <button
+                      onClick={() => {
+                        setSelectedBodyType("");
+                        applyFilters({ body: "" });
+                      }}
+                      className="hover:text-[var(--brand-gold)] cursor-pointer"
+                    >
                       <X className="w-3 h-3" />
                     </button>
                   </span>
@@ -261,12 +319,21 @@ function CarCollectionContent() {
                 {search && (
                   <span className="px-3 py-1 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-[11px] rounded-full flex items-center gap-1.5">
                     &ldquo;{search}&rdquo;
-                    <button onClick={() => { setSearch(""); applyFilters({ search: "" }); }} className="hover:text-[var(--brand-gold)]">
+                    <button
+                      onClick={() => {
+                        setSearch("");
+                        applyFilters({ search: "" });
+                      }}
+                      className="hover:text-[var(--brand-gold)] cursor-pointer"
+                    >
                       <X className="w-3 h-3" />
                     </button>
                   </span>
                 )}
-                <button onClick={handleResetFilters} className="text-[11px] text-[var(--brand-gold)] underline">
+                <button
+                  onClick={handleResetFilters}
+                  className="text-[11px] text-[var(--brand-gold)] hover:underline cursor-pointer ml-1"
+                >
                   Xóa tất cả
                 </button>
               </div>

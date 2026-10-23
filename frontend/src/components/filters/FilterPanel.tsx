@@ -1,12 +1,16 @@
 import React from "react";
 import { Filter, Search, RotateCcw } from "lucide-react";
-import { Brand } from "@/lib/api";
+import { Brand, Category } from "@/lib/api";
+import CategoryTreeFilter from "@/components/car/CategoryTreeFilter";
 
 interface FilterPanelProps {
   search: string;
   setSearch: (v: string) => void;
   selectedBrand: string;
   setSelectedBrand: (v: string) => void;
+  selectedCategory?: string;
+  setSelectedCategory?: (v: string) => void;
+  categories?: Category[];
   selectedBodyType: string;
   setSelectedBodyType: (v: string) => void;
   brands: Brand[];
@@ -20,6 +24,9 @@ export function FilterPanel({
   setSearch,
   selectedBrand,
   setSelectedBrand,
+  selectedCategory = "",
+  setSelectedCategory,
+  categories = [],
   selectedBodyType,
   setSelectedBodyType,
   brands,
@@ -62,8 +69,23 @@ export function FilterPanel({
         </div>
       </div>
 
+      {/* Category Tree Filter (Phân khúc & Dòng xe) */}
+      {categories && categories.length > 0 && (
+        <div className="pt-4 border-t border-[var(--border-subtle)]">
+          <CategoryTreeFilter
+            categories={categories}
+            selectedCategoryId={selectedCategory ? Number(selectedCategory) : null}
+            onSelectCategory={(cat) => {
+              const nextId = cat ? String(cat.id) : "";
+              setSelectedCategory?.(nextId);
+              applyFilters({ category: nextId });
+            }}
+          />
+        </div>
+      )}
+
       {/* Brand Filter */}
-      <div className="space-y-2">
+      <div className="space-y-2 pt-4 border-t border-[var(--border-subtle)]">
         <label className="text-xs font-semibold text-[var(--text-primary)]">Thương hiệu</label>
         <div className="space-y-1 max-h-48 overflow-y-auto pr-1">
           <button
@@ -105,7 +127,7 @@ export function FilterPanel({
       <div className="space-y-2 pt-4 border-t border-[var(--border-subtle)]">
         <label className="text-xs font-semibold text-[var(--text-primary)]">Kiểu dáng thân xe</label>
         <div className="grid grid-cols-2 gap-2">
-          {["Coupe", "SUV", "Sedan", "Convertible"].map((type) => (
+          {["Sedan", "SUV", "MPV", "Bán tải", "Crossover", "Hatchback"].map((type) => (
             <button
               key={type}
               type="button"
@@ -114,7 +136,7 @@ export function FilterPanel({
                 setSelectedBodyType(next);
                 applyFilters({ body: next });
               }}
-              className={`py-2.5 px-2.5 rounded text-xs text-center border transition min-h-[40px] cursor-pointer ${
+              className={`py-2 px-2 rounded text-xs text-center border transition min-h-[38px] cursor-pointer ${
                 selectedBodyType === type
                   ? "bg-[var(--brand-gold)] border-[var(--brand-gold)] text-black font-semibold shadow-xs"
                   : "bg-[var(--surface-low)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--brand-gold)]"

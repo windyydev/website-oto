@@ -19,8 +19,48 @@ class ImageOrderItem(BaseModel):
     sort_order: int
     is_primary: bool = False
 
+class CarColorBase(BaseModel):
+    name: str
+    hex_code: str
+    color_type: str = "standard" # standard | metallic | bespoke
+    price_delta: float = 0.0
+    images: List[str] = []
+    sort_order: int = 0
+    is_default: bool = False
+
+class CarColorCreate(CarColorBase):
+    car_id: int
+
+class CarColorResponse(CarColorBase):
+    id: int
+    car_id: int
+
+    class Config:
+        from_attributes = True
+
+class CarOptionBase(BaseModel):
+    group: str
+    name: str
+    code: Optional[str] = None
+    description: Optional[str] = None
+    price: float = 0.0
+    is_standard: bool = False
+    is_selected: bool = False
+    sort_order: int = 0
+
+class CarOptionCreate(CarOptionBase):
+    car_id: int
+
+class CarOptionResponse(CarOptionBase):
+    id: int
+    car_id: int
+
+    class Config:
+        from_attributes = True
+
 class CarBase(BaseModel):
     brand_id: int
+    category_id: Optional[int] = None
     name: str
     slug: str
     stock_code: Optional[str] = None
@@ -53,6 +93,8 @@ class CarCreate(CarBase):
 class CarResponse(CarBase):
     id: int
     images: List[CarImageResponse] = []
+    colors: List[CarColorResponse] = []
+    options: List[CarOptionResponse] = []
     created_at: datetime
     updated_at: datetime
 

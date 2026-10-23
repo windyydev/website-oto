@@ -29,6 +29,43 @@ export interface Brand {
   country?: string;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  level: number;
+  sort_order: number;
+  parent_id?: number | null;
+  cars_count?: number;
+  children?: Category[];
+}
+
+export interface CarColor {
+  id: number;
+  car_id: number;
+  name: string;
+  hex_code: string;
+  color_type: "standard" | "metallic" | "bespoke";
+  price_delta: number;
+  images: string[];
+  sort_order: number;
+  is_default: boolean;
+}
+
+export interface CarOption {
+  id: number;
+  car_id: number;
+  group: string;
+  name: string;
+  code?: string;
+  description?: string;
+  price: number;
+  is_standard: boolean;
+  is_selected: boolean;
+  sort_order: number;
+}
+
 export interface CarImage {
   id: number;
   image_url: string;
@@ -41,6 +78,7 @@ export interface CarImage {
 export interface Car {
   id: number;
   brand_id: number;
+  category_id?: number;
   name: string;
   slug: string;
   stock_code?: string;
@@ -62,9 +100,12 @@ export interface Car {
   owners_count?: number;
   has_factory_warranty?: boolean;
   warranty_months?: number;
-  specs?: Array<{ group: string; label: string; value: string }>;
+  is_inspected: boolean;
   is_featured: boolean;
+  specs?: Array<{ group: string; label: string; value: string }>;
   images: CarImage[];
+  colors?: CarColor[];
+  options?: CarOption[];
   created_at: string;
 }
 
@@ -138,8 +179,30 @@ export const adminApi = {
     return res.data;
   },
 
+  // Categories
+  getCategoryTree: async (): Promise<Category[]> => {
+    const res = await api.get("/categories/tree");
+    return res.data;
+  },
+  getCategories: async (params?: { level?: number; parent_id?: number }): Promise<Category[]> => {
+    const res = await api.get("/categories/", { params });
+    return res.data;
+  },
+
   // Cars
-  getCars: async (params?: { page?: number; page_size?: number; search?: string; status?: string; brand_id?: number }) => {
+  getCars: async (params?: {
+    page?: number;
+    page_size?: number;
+    search?: string;
+    status?: string;
+    brand_id?: number;
+    category_id?: number;
+    body_type?: string;
+    condition?: string;
+    min_price?: number;
+    max_price?: number;
+    sort?: string;
+  }) => {
     const res = await api.get("/cars/", { params });
     return res.data;
   },

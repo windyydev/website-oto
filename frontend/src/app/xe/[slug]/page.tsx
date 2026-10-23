@@ -21,9 +21,11 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight as ChevronRightIcon,
+  SlidersHorizontal,
 } from "lucide-react";
 import { api, adminApi, Car } from "@/lib/api";
 import CarCard, { formatPrice } from "@/components/car/CarCard";
+import CarConfiguratorStudio from "@/components/car/CarConfiguratorStudio";
 
 export default function CarDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
@@ -37,6 +39,7 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
   // Gallery state
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [selectedColorImages, setSelectedColorImages] = useState<string[] | null>(null);
 
   // Touch/swipe state for gallery
   const touchStartX = useRef<number | null>(null);
@@ -110,9 +113,22 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
     return notFound();
   }
 
-  const allImages = car.images && car.images.length > 0
+  const baseImages = car.images && car.images.length > 0
     ? car.images
-    : [{ id: 0, image_url: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1600&q=85", category: "exterior", sort_order: 0, is_primary: true }];
+    : [{ id: 0, image_url: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1600&q=85", category: "exterior" as const, sort_order: 0, is_primary: true }];
+
+  const allImages = selectedColorImages && selectedColorImages.length > 0
+    ? [
+        ...selectedColorImages.map((url, idx) => ({
+          id: -1 - idx,
+          image_url: url,
+          category: "exterior" as const,
+          sort_order: idx,
+          is_primary: idx === 0,
+        })),
+        ...baseImages.filter((img) => img.category !== "exterior"),
+      ]
+    : baseImages;
 
   const filteredImages = activeCategory === "all"
     ? allImages
@@ -312,6 +328,26 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
               </div>
             </div>
 
+            {/* Atelier Configurator Studio (Color Variants & Custom Options) */}
+            <div id="configurator-studio">
+              <CarConfiguratorStudio
+                car={car}
+                onSelectColorChange={(color) => {
+                  if (color?.images && color.images.length > 0) {
+                    setSelectedColorImages(color.images);
+                    setActiveImageIndex(0);
+                  }
+                }}
+                onOpenTestDriveModal={(details) => {
+                  openModal({
+                    id: car.id,
+                    name: car.name,
+                    configDetails: details,
+                  });
+                }}
+              />
+            </div>
+
             {/* Description Narrative */}
             <div className="p-6 md:p-8 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-xl space-y-4 shadow-xs">
               <h2 className="text-lg font-display font-semibold text-[var(--text-primary)]">
@@ -422,6 +458,19 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
                   <Sparkles className="w-4 h-4 text-[#0B0C0E]" />
                   <span>Đặt Lịch Lái Thử Riêng Tư</span>
                 </button>
+
+                {((car.colors && car.colors.length > 0) || (car.options && car.options.length > 0)) && (
+                  <a
+                    href="#configurator-studio"
+                    className="w-full py-2.5 px-3 bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] border border-[var(--brand-gold)]/40 text-[var(--brand-gold)] font-medium text-xs rounded transition flex items-center justify-between group cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <SlidersHorizontal className="w-3.5 h-3.5" />
+                      <span>Tùy Biến Màu & Gói Option</span>
+                    </span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </a>
+                )}
 
                 <a
                   href="tel:0908123456"

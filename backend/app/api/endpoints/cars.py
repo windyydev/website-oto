@@ -4,8 +4,12 @@ from sqlalchemy import desc, asc
 from typing import List, Optional
 from app.core.database import get_db
 from app.core.security import get_current_admin
-from app.models.car import Car, CarImage
-from app.schemas.car import CarResponse, CarCreate, CarListResponse, ImageOrderItem
+from app.models.car import Car, CarImage, CarColor, CarOption
+from app.models.category import Category
+from app.schemas.car import (
+    CarResponse, CarCreate, CarListResponse, ImageOrderItem,
+    CarColorResponse, CarColorCreate, CarOptionResponse, CarOptionCreate
+)
 from app.services.storage import get_storage_service
 
 router = APIRouter()
@@ -15,6 +19,7 @@ def get_cars(
     page: int = Query(1, ge=1),
     page_size: int = Query(12, ge=1, le=100),
     brand_id: Optional[int] = Query(None),
+    category_id: Optional[int] = Query(None, description="Lọc theo ID danh mục trong Category Tree"),
     status: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
     min_price: Optional[float] = None,
@@ -23,12 +28,22 @@ def get_cars(
     db: Session = Depends(get_db)
 ):
     """
-    Lấy danh sách xe với hỗ trợ lọc, phân trang và sắp xếp.
+    Lấy danh sách xe với hỗ trợ lọc theo Category Tree, Brand, phân trang và sắp xếp.
     """
     query = db.query(Car)
     
     if brand_id is not None:
         query = query.filter(Car.brand_id == brand_id)
+    if category_id is not None:
+        # Lấy tất cả category con thuộc category này
+        def get_all_sub_cat_ids(parent_id: int) -> List[int]:
+            sub_cats = db.query(Category.id).filter(Category.parent_id == parent_id).all()
+            ids = [parent_id]
+            for s in sub_cats:
+                ids.extend(get_all_sub_cat_ids(s[0]))
+            return ids
+        all_cat_ids = get_all_sub_cat_ids(category_id)
+        query = query.filter(Car.category_id.in_(all_cat_ids))
     if status is not None:
         query = query.filter(Car.status == status)
     if search:
@@ -156,3 +171,71 @@ def update_car_images_order(
 
     db.commit()
     return {"status": "ok", "message": "Cập nhật thứ tự ảnh thành công"}
+
+@router.post("/{id}/colors", response_model=CarColorResponse)
+def add_car_color(
+    id: int,
+    color_data: CarColorCreate,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
+    """Thêm biến thể màu sắc kèm ảnh & giá chênh lệch cho xe."""
+    car = db.query(Car).filter(Car.id == id).first()
+    if not car:
+        raise HTTPException(status_code=404, detail="Không tìm thấy xe")
+
+    new_color = CarColor(car_id=id, **color_data.model_dump())
+    db.add(new_color)
+    db.commit()
+    db.refresh(new_color)
+    return new_color
+
+@router.delete("/{id}/colors/{color_id}")
+def delete_car_color(
+    id: int,
+    color_id: int,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
+    """Xóa biến thể màu của xe."""
+    color = db.query(CarColor).filter(CarColor.id == color_id, CarColor.car_id == id).first()
+    if not color:
+        raise HTTPException(status_code=404, detail="Không tìm thấy màu")
+
+    db.delete(color)
+    db.commit()
+    return {"status": "ok", "message": "Đã xóa màu thành công"}
+
+@router.post("/{id}/options", response_model=CarOptionResponse)
+def add_car_option(
+    id: int,
+    opt_data: CarOptionCreate,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
+    """Thêm trang bị option và giá cho xe."""
+    car = db.query(Car).filter(Car.id == id).first()
+    if not car:
+        raise HTTPException(status_code=404, detail="Không tìm thấy xe")
+
+    new_opt = CarOption(car_id=id, **opt_data.model_dump())
+    db.add(new_opt)
+    db.commit()
+    db.refresh(new_opt)
+    return new_opt
+
+@router.delete("/{id}/options/{option_id}")
+def delete_car_option(
+    id: int,
+    option_id: int,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
+    """Xóa option của xe."""
+    opt = db.query(CarOption).filter(CarOption.id == option_id, CarOption.car_id == id).first()
+    if not opt:
+        raise HTTPException(status_code=404, detail="Không tìm thấy option")
+
+    db.delete(opt)
+    db.commit()
+    return {"status": "ok", "message": "Đã xóa option thành công"}

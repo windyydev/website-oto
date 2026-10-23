@@ -55,12 +55,17 @@ class Car(Base):
     
     is_featured = Column(Boolean, default=False, index=True)
     
+    category_id = Column(Integer, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True, index=True)
+    
     specs = Column(JSONB, nullable=True) # [{group, label, value}]
     
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     brand = relationship("Brand", back_populates="cars")
+    category = relationship("Category", back_populates="cars")
+    colors = relationship("CarColor", back_populates="car", cascade="all, delete-orphan", order_by="CarColor.sort_order")
+    options = relationship("CarOption", back_populates="car", cascade="all, delete-orphan", order_by="CarOption.sort_order")
     images = relationship("CarImage", back_populates="car", cascade="all, delete-orphan")
     features = relationship("CarFeature", back_populates="car", cascade="all, delete-orphan")
     inspection_report = relationship("InspectionReport", back_populates="car", uselist=False, cascade="all, delete-orphan")
@@ -102,3 +107,36 @@ class InspectionReport(Base):
     inspected_at = Column(DateTime(timezone=True), server_default=func.now())
 
     car = relationship("Car", back_populates="inspection_report")
+
+class CarColor(Base):
+    """Biến thể màu sắc kèm giá chênh lệch và bộ ảnh riêng theo màu."""
+    __tablename__ = "car_colors"
+
+    id = Column(Integer, primary_key=True, index=True)
+    car_id = Column(Integer, ForeignKey("cars.id", ondelete="CASCADE"), nullable=False, index=True)
+    name = Column(String(100), nullable=False)        # VD: "Chalk / Crayon", "Guards Red"
+    hex_code = Column(String(20), nullable=False)     # VD: "#D2D1CD", "#D81920"
+    color_type = Column(String(50), default="standard") # standard | metallic | bespoke
+    price_delta = Column(Float, default=0.0)          # Giá cộng thêm (VD: 95_000_000)
+    images = Column(JSONB, default=list)              # Danh sách URL ảnh xe theo đúng màu này
+    sort_order = Column(Integer, default=0)
+    is_default = Column(Boolean, default=False)
+
+    car = relationship("Car", back_populates="colors")
+
+class CarOption(Base):
+    """Trang bị tùy chọn (Option) phân nhóm kèm giá tiền."""
+    __tablename__ = "car_options"
+
+    id = Column(Integer, primary_key=True, index=True)
+    car_id = Column(Integer, ForeignKey("cars.id", ondelete="CASCADE"), nullable=False, index=True)
+    group = Column(String(100), nullable=False, index=True) # Mâm xe | Nội thất & Ghế | Hiệu năng | Âm thanh & Đèn
+    name = Column(String(200), nullable=False)              # VD: "Hệ thống phanh gốm Carbon (PCCB)"
+    code = Column(String(50), nullable=True)                # Mã Option: "1LX", "0P9"
+    description = Column(Text, nullable=True)
+    price = Column(Float, default=0.0)                      # Giá option: 450_000_000
+    is_standard = Column(Boolean, default=False)            # Tiêu chuẩn hay Tùy chọn thêm
+    is_selected = Column(Boolean, default=False)            # Mặc định đã được chọn sẵn hay chưa
+    sort_order = Column(Integer, default=0)
+
+    car = relationship("Car", back_populates="options")
