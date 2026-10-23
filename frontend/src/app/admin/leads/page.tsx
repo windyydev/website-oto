@@ -149,7 +149,7 @@ function LeadsContent() {
               onClick={() => setActiveTab("leads")}
               className={`px-4 py-2 text-xs font-medium rounded-lg transition cursor-pointer flex items-center gap-2 ${
                 activeTab === "leads"
-                  ? "bg-[var(--surface-base)] text-[var(--text-primary)] font-semibold shadow-xs border border-[var(--border-subtle)]"
+                  ? "bg-[var(--surface-base)] dark:bg-[var(--surface-mid)] text-[var(--brand-gold)] font-semibold shadow-xs border border-[var(--border-subtle)] dark:border-[var(--brand-gold)]/30"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -160,7 +160,7 @@ function LeadsContent() {
               onClick={() => setActiveTab("test_drives")}
               className={`px-4 py-2 text-xs font-medium rounded-lg transition cursor-pointer flex items-center gap-2 ${
                 activeTab === "test_drives"
-                  ? "bg-[var(--surface-base)] text-[var(--text-primary)] font-semibold shadow-xs border border-[var(--border-subtle)]"
+                  ? "bg-[var(--surface-base)] dark:bg-[var(--surface-mid)] text-[var(--brand-gold)] font-semibold shadow-xs border border-[var(--border-subtle)] dark:border-[var(--brand-gold)]/30"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
@@ -171,7 +171,7 @@ function LeadsContent() {
               onClick={() => setActiveTab("inspections")}
               className={`px-4 py-2 text-xs font-medium rounded-lg transition cursor-pointer flex items-center gap-2 ${
                 activeTab === "inspections"
-                  ? "bg-[var(--surface-base)] text-[var(--text-primary)] font-semibold shadow-xs border border-[var(--border-subtle)]"
+                  ? "bg-[var(--surface-base)] dark:bg-[var(--surface-mid)] text-[var(--brand-gold)] font-semibold shadow-xs border border-[var(--border-subtle)] dark:border-[var(--brand-gold)]/30"
                   : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >

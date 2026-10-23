@@ -69,7 +69,7 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ slug: 
         {/* Header */}
         <div className="space-y-4">
           <div className="flex items-center gap-3 text-xs">
-            <span className="px-2.5 py-0.5 rounded bg-[var(--surface-inverted)] text-[var(--brand-gold)] font-semibold uppercase tracking-wider text-[10px]">
+            <span className="px-2.5 py-0.5 rounded bg-[var(--surface-low)] border border-[var(--border-subtle)] text-[var(--brand-gold)] font-semibold uppercase tracking-wider text-[10px]">
               {post.category || "Bài Viết"}
             </span>
             <span className="text-[var(--text-secondary)]">
@@ -110,7 +110,7 @@ export default function ArticleDetailPage({ params }: { params: Promise<{ slug: 
           <span>© Atelier Curated Automotive Magazine</span>
           <Link
             href="/tin-tuc"
-            className="px-4 py-2 bg-[var(--surface-inverted)] text-[var(--text-inverted)] rounded font-semibold text-xs hover:bg-[var(--brand-gold)] hover:text-[#121316] transition"
+            className="px-4 py-2 bg-[var(--surface-inverted)] text-[var(--text-inverted)] rounded font-semibold text-xs hover:bg-[var(--brand-gold)] hover:text-[#121316] transition cursor-pointer shadow-sm"
           >
             Quay lại danh sách tin
           </Link>

@@ -30,7 +30,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     <button
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      className={`group relative w-9 h-9 rounded-lg flex items-center justify-center border border-[var(--border-subtle)] bg-[var(--surface-base)] hover:bg-[var(--surface-low)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-200 focus:outline-none ${className}`}
+      className={`group relative w-9 h-9 rounded-lg flex items-center justify-center border border-[var(--border-subtle)] bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all duration-200 focus:outline-none cursor-pointer shadow-xs ${className}`}
       title={isDark ? "Chuyển sang giao diện Sáng (Light Mode)" : "Chuyển sang giao diện Tối (Dark Mode)"}
       aria-label="Đổi giao diện Dark/Light Mode"
     >

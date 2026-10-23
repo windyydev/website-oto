@@ -417,9 +417,9 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
               <div className="space-y-3">
                 <button
                   onClick={() => openModal({ id: car.id, name: car.name })}
-                  className="w-full py-3.5 bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] font-semibold text-xs uppercase tracking-wider rounded transition shadow-md flex items-center justify-center gap-2"
+                  className="w-full py-3.5 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] font-semibold text-xs uppercase tracking-wider rounded transition shadow-md flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4 text-[var(--brand-gold)]" />
+                  <Sparkles className="w-4 h-4 text-[#0B0C0E]" />
                   <span>Đặt Lịch Lái Thử Riêng Tư</span>
                 </button>
 
@@ -522,9 +522,9 @@ export default function CarDetailPage({ params }: { params: Promise<{ slug: stri
           {/* Test drive button */}
           <button
             onClick={() => openModal({ id: car.id, name: car.name })}
-            className="flex items-center justify-center gap-1.5 px-5 py-3 bg-[var(--brand-primary)] text-[var(--text-inverted)] font-semibold text-xs rounded-xl flex-1 min-h-[52px]"
+            className="flex items-center justify-center gap-1.5 px-5 py-3 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] font-semibold text-xs rounded-xl flex-1 min-h-[52px] cursor-pointer shadow-sm"
           >
-            <Sparkles className="w-4 h-4 text-[var(--brand-gold)]" />
+            <Sparkles className="w-4 h-4 text-[#0B0C0E]" />
             <span>Đặt Lịch Lái Thử</span>
           </button>
         </div>

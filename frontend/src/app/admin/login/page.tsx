@@ -138,7 +138,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full mt-2 py-3 bg-[#9E7D53] hover:bg-[#8A6C44] text-[#0B0C0E] font-semibold text-xs uppercase tracking-wider rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group cursor-pointer"
+              className="w-full mt-2 py-3 bg-[#9E7D53] hover:opacity-90 text-[#0B0C0E] font-semibold text-xs uppercase tracking-wider rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed group cursor-pointer"
             >
               {submitting ? (
                 <>

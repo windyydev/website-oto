@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
 from app.core.database import get_db
+from app.core.security import get_current_admin
 from app.models.car import Car, CarStatus
 from app.models.lead import Lead, LeadStatus
 from app.models.brand import Brand
@@ -9,7 +10,10 @@ from app.models.brand import Brand
 router = APIRouter()
 
 @router.get("/stats")
-def get_dashboard_stats(db: Session = Depends(get_db)):
+def get_dashboard_stats(
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Lấy số liệu tổng hợp cho trang Dashboard Admin."""
     total_cars = db.query(Car).count()
     available_cars = db.query(Car).filter(Car.status == CarStatus.available).count()

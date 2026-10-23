@@ -16,6 +16,7 @@
   --color-surface-low: var(--surface-low);
   --color-surface-mid: var(--surface-mid);
   --color-surface-high: var(--surface-high);
+  --color-surface-inverted: var(--surface-inverted);
 
   /* Text tokens */
   --color-text-primary: var(--text-primary);
@@ -24,6 +25,8 @@
   --color-text-inverted: var(--text-inverted);
 
   /* Brand Accents */
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
   --color-brand-gold: var(--brand-gold);
   --color-brand-cyan: var(--brand-cyan);
   --color-brand-emerald: var(--brand-emerald);
@@ -80,6 +83,7 @@
   --surface-low: #F3F4F3;
   --surface-mid: #EBECEB;
   --surface-high: #E1E3E2;
+  --surface-inverted: #121316;
 
   --text-primary: #121316;
   --text-secondary: #525866;
@@ -87,6 +91,8 @@
   --text-inverted: #FFFFFF;
 
   --primary: #121316;
+  --brand-primary: #121316;
+  --brand-primary-hover: #22252A;
   --brand-gold: #C5A880;
   --brand-cyan: #0098B8;
   --brand-emerald: #10B981;
@@ -127,13 +133,16 @@
   --surface-low: #1A1C20;
   --surface-mid: #22252A;
   --surface-high: #2D3138;
+  --surface-inverted: #F4F5F6;
 
   --text-primary: #F4F5F6;
   --text-secondary: #A0A6B2;
   --text-muted: #6C7381;
-  --text-inverted: #121316;
+  --text-inverted: #0B0C0E;
 
-  --primary: #FFFFFF;
+  --primary: #F4F5F6;
+  --brand-primary: #F4F5F6;
+  --brand-primary-hover: #FFFFFF;
   --brand-gold: #D4AF37;
   --brand-cyan: #38BDF8;
   --brand-emerald: #10B981;

@@ -126,9 +126,9 @@ function AdminContentShell({ children }: { children: React.ReactNode }) {
           1. ATELIER ADMIN SIDEBAR (Rộng 300px - w-[300px] thoáng đãng)
           ======================================================== */}
       <aside className="fixed top-0 left-0 bottom-0 z-40 w-[300px] flex flex-col justify-between bg-[var(--surface-base)] border-r border-[var(--border-subtle)] shadow-xs select-none">
-        <div className="flex flex-col gap-3">
-          {/* Brand & Admin Identity */}
-          <div className="px-6 pt-6 pb-3">
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Brand Header */}
+          <div className="px-6 py-6 border-b border-[var(--border-subtle)]">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-[var(--surface-low)] border border-[var(--brand-gold)]/30 flex items-center justify-center text-[var(--brand-gold)] shadow-xs">
                 <Sparkles className="w-5 h-5 text-[var(--brand-gold)]" />
@@ -142,38 +142,10 @@ function AdminContentShell({ children }: { children: React.ReactNode }) {
                 </span>
               </div>
             </div>
-
-            {/* Admin Profile Pill */}
-            <div className="mt-5 p-3 rounded-xl bg-[var(--surface-low)] border border-[var(--border-subtle)] flex items-center justify-between">
-              <div className="flex items-center gap-3 overflow-hidden">
-                <div className="w-9 h-9 rounded-lg bg-[var(--brand-gold)]/15 border border-[var(--brand-gold)]/30 flex items-center justify-center font-display font-bold text-xs text-[var(--brand-gold)] shrink-0">
-                  {user?.username ? user.username.slice(0, 2).toUpperCase() : "AD"}
-                </div>
-                <div className="flex flex-col truncate">
-                  <span className="font-medium text-xs text-[var(--text-primary)] truncate">
-                    {user?.name || "Master Admin"}
-                  </span>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                    <span className="text-[10px] uppercase font-semibold text-[var(--brand-gold)] tracking-wider truncate">
-                      {user?.role === "admin" ? "Quản trị viên" : user?.role}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={logout}
-                title="Đăng xuất khỏi hệ thống"
-                className="p-1.5 rounded-lg hover:bg-red-500/10 text-[var(--text-muted)] hover:text-red-500 transition cursor-pointer"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
           </div>
 
           {/* Navigation Links */}
-          <nav className="px-4 space-y-1.5 overflow-y-auto max-h-[calc(100vh-310px)]">
+          <nav className="px-4 py-4 space-y-1.5 overflow-y-auto flex-1">
             <div className="text-[10px] font-semibold text-[var(--text-muted)] uppercase tracking-[0.15em] px-3 mb-2">
               Menu Điều Hành
             </div>
@@ -288,33 +260,46 @@ function AdminContentShell({ children }: { children: React.ReactNode }) {
             {/* Notification Button */}
             <button
               type="button"
-              className="relative p-2.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-base)] hover:bg-[var(--surface-low)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition"
+              className="relative p-2.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer shadow-xs"
               title="Thông báo mới"
             >
               <Bell className="w-4 h-4" />
-              <span className="absolute 1 top-1.5 right-1.5 w-2 h-2 bg-[var(--brand-gold)] rounded-full animate-ping" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[var(--brand-gold)] rounded-full animate-ping" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[var(--brand-gold)] rounded-full" />
             </button>
 
             {/* Primary Action: Add Vehicle */}
             <Link
               href="/admin/cars/create"
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--brand-gold)] hover:bg-[#8A6C44] text-[#0B0C0E] text-xs font-semibold uppercase tracking-wider transition active:scale-95 shadow-sm"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] text-xs font-semibold uppercase tracking-wider transition active:scale-95 shadow-sm"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Đăng Xe Mới</span>
             </Link>
 
-            {/* Logout Button in Header */}
-            <button
-              type="button"
-              onClick={logout}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 text-xs font-medium text-red-500 hover:text-red-400 transition cursor-pointer"
-              title="Đăng xuất khỏi hệ thống"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">Đăng xuất</span>
-            </button>
+            {/* Admin Profile & Logout in Header */}
+            <div className="flex items-center gap-2.5 pl-3 border-l border-[var(--border-subtle)]">
+              <div className="w-8 h-8 rounded-lg bg-[var(--brand-gold)]/15 border border-[var(--brand-gold)]/30 flex items-center justify-center font-display font-bold text-xs text-[var(--brand-gold)] shrink-0">
+                {user?.username ? user.username.slice(0, 2).toUpperCase() : "AD"}
+              </div>
+              <div className="hidden xl:flex flex-col text-left">
+                <span className="font-medium text-xs text-[var(--text-primary)] truncate max-w-[120px]">
+                  {user?.name || "Master Admin"}
+                </span>
+                <span className="text-[10px] text-[var(--brand-gold)] font-medium">
+                  {user?.role === "admin" ? "Quản trị viên" : user?.role}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={logout}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-red-500/20 bg-red-500/5 hover:bg-red-500/10 text-xs font-medium text-red-500 hover:text-red-400 transition cursor-pointer ml-1"
+                title="Đăng xuất khỏi hệ thống"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden lg:inline">Đăng xuất</span>
+              </button>
+            </div>
           </div>
         </header>
 

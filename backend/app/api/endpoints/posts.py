@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.core.database import get_db
+from app.core.security import get_current_admin
 from app.models.post import Post
 from app.schemas.post import PostResponse, PostCreate
 
@@ -32,7 +33,11 @@ def get_post_by_slug(slug: str, db: Session = Depends(get_db)):
     return post
 
 @router.post("/", response_model=PostResponse)
-def create_post(post: PostCreate, db: Session = Depends(get_db)):
+def create_post(
+    post: PostCreate,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Tạo bài viết mới (Dành cho Admin)."""
     db_post = db.query(Post).filter(Post.slug == post.slug).first()
     if db_post:

@@ -112,7 +112,7 @@ export default function ServicesPage() {
                 <div className="pt-6 border-t border-[var(--border-subtle)]">
                   <button
                     onClick={() => openModal()}
-                    className="w-full py-2.5 bg-[var(--surface-inverted)] hover:bg-[var(--brand-gold)] text-[var(--text-inverted)] hover:text-[#121316] font-semibold text-xs uppercase tracking-wider rounded transition"
+                    className="w-full py-2.5 bg-[var(--surface-inverted)] hover:bg-[var(--brand-gold)] text-[var(--text-inverted)] hover:text-[#121316] font-semibold text-xs uppercase tracking-wider rounded transition cursor-pointer shadow-sm"
                   >
                     Gửi Yêu Cầu Dịch Vụ Này
                   </button>

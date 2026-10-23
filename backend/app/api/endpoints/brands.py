@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from app.core.database import get_db
+from app.core.security import get_current_admin
 from app.models.brand import Brand
 from app.schemas.brand import BrandResponse, BrandCreate
 
@@ -14,7 +15,11 @@ def get_brands(db: Session = Depends(get_db)):
     return brands
 
 @router.post("/", response_model=BrandResponse)
-def create_brand(brand: BrandCreate, db: Session = Depends(get_db)):
+def create_brand(
+    brand: BrandCreate,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Tạo thương hiệu mới (Dành cho Admin)."""
     db_brand = db.query(Brand).filter(Brand.slug == brand.slug).first()
     if db_brand:
@@ -27,7 +32,11 @@ def create_brand(brand: BrandCreate, db: Session = Depends(get_db)):
     return new_brand
 
 @router.delete("/{id}")
-def delete_brand(id: int, db: Session = Depends(get_db)):
+def delete_brand(
+    id: int,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Xóa thương hiệu."""
     brand = db.query(Brand).filter(Brand.id == id).first()
     if not brand:

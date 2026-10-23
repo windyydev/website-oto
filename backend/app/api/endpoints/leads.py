@@ -6,6 +6,7 @@ from datetime import datetime
 import uuid
 
 from app.core.database import get_db
+from app.core.security import get_current_admin
 from app.models.lead import Lead, TestDriveAppointment, LeadType, LeadStatus, AppointmentStatus
 from app.schemas.lead import (
     LeadCreate, LeadResponse, LeadStatusUpdate,
@@ -18,7 +19,8 @@ router = APIRouter()
 def get_leads(
     type: Optional[LeadType] = None,
     status: Optional[LeadStatus] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
 ):
     """Lấy danh sách tất cả các Lead liên hệ (Dành cho Admin)."""
     query = db.query(Lead)
@@ -52,7 +54,8 @@ def get_leads(
 def update_lead_status(
     id: int,
     data: LeadStatusUpdate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
 ):
     """Cập nhật trạng thái xử lý của Lead."""
     lead = db.query(Lead).filter(Lead.id == id).first()
@@ -78,7 +81,10 @@ def update_lead_status(
     }
 
 @router.get("/test-drives", response_model=List[TestDriveResponse])
-def get_test_drives(db: Session = Depends(get_db)):
+def get_test_drives(
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Lấy danh sách lịch hẹn lái thử (Dành cho Admin)."""
     appointments = db.query(TestDriveAppointment).order_by(desc(TestDriveAppointment.appointment_date)).all()
     results = []

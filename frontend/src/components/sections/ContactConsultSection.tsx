@@ -180,9 +180,9 @@ export default function ContactConsultSection() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] font-semibold text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-2 disabled:opacity-50"
+                  className="w-full py-3 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] font-semibold text-xs uppercase tracking-wider rounded transition flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer shadow-sm"
                 >
-                  <Send className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
+                  <Send className="w-3.5 h-3.5 text-[#0B0C0E]" />
                   <span>{loading ? "Đang gửi..." : "Gửi Thông Tin Yêu Cầu"}</span>
                 </button>
               </form>

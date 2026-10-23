@@ -110,7 +110,7 @@ export default function AdminDashboardPage() {
             </span>
             <button
               onClick={fetchStats}
-              className="p-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-base)] hover:bg-[var(--surface-low)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
+              className="p-2 rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition cursor-pointer"
               title="Làm mới dữ liệu"
             >
               <RefreshCw className="w-4 h-4" />
@@ -465,11 +465,11 @@ export default function AdminDashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded border border-[var(--border-subtle)] text-xs font-medium bg-[var(--surface-base)] hover:bg-[var(--surface-low)] text-[var(--text-primary)] transition flex items-center gap-1.5">
+            <button className="px-3 py-1.5 rounded border border-[var(--border-subtle)] text-xs font-medium bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] text-[var(--text-primary)] transition flex items-center gap-1.5 cursor-pointer shadow-xs">
               <Filter className="w-3.5 h-3.5 text-[var(--text-muted)]" />
               <span>Bộ lọc</span>
             </button>
-            <button className="px-3 py-1.5 rounded border border-[var(--border-subtle)] text-xs font-medium bg-[var(--surface-base)] hover:bg-[var(--surface-low)] text-[var(--text-primary)] transition flex items-center gap-1.5">
+            <button className="px-3 py-1.5 rounded border border-[var(--border-subtle)] text-xs font-medium bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] text-[var(--text-primary)] transition flex items-center gap-1.5 cursor-pointer shadow-xs">
               <FileSpreadsheet className="w-3.5 h-3.5 text-[var(--text-muted)]" />
               <span>Xuất Excel</span>
             </button>

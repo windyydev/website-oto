@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc, asc
 from typing import List, Optional
 from app.core.database import get_db
+from app.core.security import get_current_admin
 from app.models.car import Car, CarImage
 from app.schemas.car import CarResponse, CarCreate, CarListResponse, ImageOrderItem
 from app.services.storage import get_storage_service
@@ -76,7 +77,11 @@ def get_car_by_slug(slug: str, db: Session = Depends(get_db)):
     return car
 
 @router.post("/", response_model=CarResponse)
-def create_car(car: CarCreate, db: Session = Depends(get_db)):
+def create_car(
+    car: CarCreate,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Tạo mới một chiếc xe (Dành cho Admin)."""
     # Kiểm tra slug trùng lặp
     existing = db.query(Car).filter(Car.slug == car.slug).first()
@@ -90,7 +95,12 @@ def create_car(car: CarCreate, db: Session = Depends(get_db)):
     return db_car
 
 @router.put("/{id}", response_model=CarResponse)
-def update_car(id: int, car_data: CarCreate, db: Session = Depends(get_db)):
+def update_car(
+    id: int,
+    car_data: CarCreate,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Cập nhật thông tin xe."""
     car = db.query(Car).filter(Car.id == id).first()
     if not car:
@@ -104,7 +114,11 @@ def update_car(id: int, car_data: CarCreate, db: Session = Depends(get_db)):
     return car
 
 @router.delete("/{id}")
-def delete_car(id: int, db: Session = Depends(get_db)):
+def delete_car(
+    id: int,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Xóa xe và dọn dẹp toàn bộ ảnh của xe trên Cloud Storage."""
     car = db.query(Car).filter(Car.id == id).first()
     if not car:
@@ -121,7 +135,12 @@ def delete_car(id: int, db: Session = Depends(get_db)):
     return {"status": "ok", "message": f"Đã xóa xe '{car.name}' thành công"}
 
 @router.patch("/{id}/images/order")
-def update_car_images_order(id: int, items: List[ImageOrderItem], db: Session = Depends(get_db)):
+def update_car_images_order(
+    id: int,
+    items: List[ImageOrderItem],
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Cập nhật thứ tự hiển thị và ảnh đại diện chính (is_primary) cho xe."""
     car = db.query(Car).filter(Car.id == id).first()
     if not car:

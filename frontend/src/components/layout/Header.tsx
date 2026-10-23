@@ -78,10 +78,10 @@ export default function Header() {
 
             <button
               onClick={() => openModal()}
-              className="px-5 py-2.5 bg-[var(--brand-primary)] hover:opacity-90 text-[var(--text-inverted)] text-xs font-semibold uppercase tracking-wider rounded transition shadow-sm flex items-center gap-2"
+              className="px-5 py-2.5 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] text-xs font-semibold uppercase tracking-wider rounded transition shadow-sm flex items-center gap-2 cursor-pointer"
             >
               <span>Đặt Lịch Lái Thử</span>
-              <ArrowUpRight className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#0B0C0E]" />
             </button>
 
             <ThemeToggle />

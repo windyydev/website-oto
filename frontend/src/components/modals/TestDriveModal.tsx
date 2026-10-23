@@ -127,7 +127,7 @@ export default function TestDriveModal() {
 
               <button
                 onClick={closeModal}
-                className="mt-3 px-6 py-2 bg-[var(--brand-gold)] hover:bg-[#8A6C44] text-[#0B0C0E] text-xs uppercase tracking-wider font-semibold rounded-lg transition cursor-pointer"
+                className="mt-3 px-6 py-2 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] text-xs uppercase tracking-wider font-semibold rounded-lg transition cursor-pointer shadow-sm"
               >
                 Đóng Cửa Sổ
               </button>
@@ -304,7 +304,7 @@ export default function TestDriveModal() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-[var(--brand-gold)] hover:bg-[#8A6C44] text-[#0B0C0E] font-semibold text-xs uppercase tracking-wider rounded-xl transition shadow-lg disabled:opacity-50 cursor-pointer"
+                  className="w-full py-3 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] font-semibold text-xs uppercase tracking-wider rounded-xl transition shadow-lg disabled:opacity-50 cursor-pointer"
                 >
                   {loading ? "Đang xử lý đặt lịch..." : "Xác Nhận Đặt Lịch Lái Thử"}
                 </button>

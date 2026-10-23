@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from typing import List
 from app.core.database import get_db
+from app.core.security import get_current_admin
 from app.services.storage import get_storage_service
 from app.models.car import CarImage, ImageCategory
 
@@ -12,7 +13,8 @@ def upload_car_images(
     car_id: int = Form(...),
     category: ImageCategory = Form(ImageCategory.exterior),
     files: List[UploadFile] = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
 ):
     """
     Nhận nhiều file ảnh cho 1 chiếc xe, lưu trữ qua Storage Service (Cloudinary/S3)
@@ -48,7 +50,11 @@ def upload_car_images(
     }
 
 @router.delete("/car-images/{image_id}")
-def delete_car_image(image_id: int, db: Session = Depends(get_db)):
+def delete_car_image(
+    image_id: int,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
     """Xóa ảnh trong cả Database và Cloud Storage (Cloudinary/S3)."""
     db_img = db.query(CarImage).filter(CarImage.id == image_id).first()
     if not db_img:
@@ -66,7 +72,11 @@ def delete_car_image(image_id: int, db: Session = Depends(get_db)):
     return {"status": "ok", "message": "Đã xóa ảnh thành công"}
 
 @router.post("/general")
-def upload_general_image(file: UploadFile = File(...), folder: str = Form("general")):
+def upload_general_image(
+    file: UploadFile = File(...),
+    folder: str = Form("general"),
+    admin: dict = Depends(get_current_admin)
+):
     """Upload ảnh thông thường (banner, avatar, bài viết) trả về URL trực tiếp."""
     storage = get_storage_service()
     result = storage.upload_file(file.file, file.filename, folder=f"website-oto/{folder}")
