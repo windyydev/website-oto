@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ShieldCheck, Award, Users, CheckCircle2, ArrowRight } from "lucide-react";
 import AboutStatsSection from "@/components/sections/AboutStatsSection";
 import WhyUsSection from "@/components/sections/WhyUsSection";
 import TestDriveCTASection from "@/components/sections/TestDriveCTASection";
+
+export const metadata: Metadata = {
+  title: "Về Chúng Tôi – Triết Lý Tuyển Chọn Atelier Curated Automotive",
+  description: "Tìm hiểu câu chuyện thương hiệu, triết lý Quiet Luxury và quy trình tuyển chọn kiểm định 160 điểm khắt khe bậc nhất tại Atelier.",
+};
 
 export default function AboutPage() {
   return (

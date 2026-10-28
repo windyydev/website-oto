@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { MapPin, Phone, Mail, Clock, ShieldCheck, Sparkles } from "lucide-react";
 import ContactConsultSection from "@/components/sections/ContactConsultSection";
+
+export const metadata: Metadata = {
+  title: "Liên Hệ & Đặt Lịch Tiếp Đón Riêng Tư – Atelier Showroom",
+  description: "Thông tin liên hệ, hotline 24/7 và đặt lịch trải nghiệm riêng tư tại không gian trưng bày Atelier Curated Automotive.",
+};
 
 export default function ContactPage() {
   return (

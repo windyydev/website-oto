@@ -78,6 +78,7 @@ export interface CarImage {
 export interface Car {
   id: number;
   brand_id: number;
+  brand?: Brand;
   category_id?: number;
   name: string;
   slug: string;

@@ -2,8 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { useTestDrive } from "@/context/TestDriveContext";
-import { X, Calendar, Clock, MapPin, CheckCircle2, AlertCircle, CarFront } from "lucide-react";
+import { 
+  X, 
+  Calendar, 
+  Clock, 
+  MapPin, 
+  CheckCircle2, 
+  AlertCircle, 
+  CarFront, 
+  Copy, 
+  Check, 
+  CalendarPlus, 
+  Download, 
+  Printer 
+} from "lucide-react";
+import { toast } from "sonner";
 import { api, adminApi, Car } from "@/lib/api";
+import { getGoogleCalendarUrl, downloadIcsFile } from "@/lib/calendar";
 
 export default function TestDriveModal() {
   const { isOpen, closeModal, selectedCar } = useTestDrive();
@@ -21,6 +36,9 @@ export default function TestDriveModal() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successCode, setSuccessCode] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const activeCarName = selectedCar?.name || cars.find((c) => c.id === carId)?.name || "Xe Showroom";
 
   useEffect(() => {
     if (isOpen) {
@@ -112,30 +130,142 @@ export default function TestDriveModal() {
         {/* Content */}
         <div className="p-6 overflow-y-auto flex-1">
           {successCode ? (
-            <div className="py-6 text-center space-y-4">
+            <div className="py-4 space-y-5 text-center">
               <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-500 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
+
               <div>
-                <h4 className="text-base font-display font-semibold text-[var(--text-primary)]">Đặt Lịch Lái Thử Thành Công!</h4>
-                <p className="text-xs text-[var(--text-secondary)] mt-1.5 max-w-md mx-auto leading-relaxed">
-                  Chuyên viên quản lý trải nghiệm của Atelier sẽ liên hệ với bạn trong vòng 15 phút để xác nhận lộ trình lái thử.
+                <h4 className="text-base font-display font-semibold text-[var(--text-primary)]">
+                  Đặt Lịch Lái Thử Thành Công!
+                </h4>
+                <p className="text-xs text-[var(--text-secondary)] mt-1 max-w-md mx-auto leading-relaxed">
+                  Chuyên viên quản lý trải nghiệm Atelier sẽ liên hệ với Quý khách trong vòng 15 phút để chuẩn bị xe và lộ trình riêng tư.
                 </p>
               </div>
 
-              <div className="p-3.5 bg-[var(--surface-low)] rounded-xl border border-[var(--border-subtle)] max-w-xs mx-auto text-center">
-                <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Mã Xác Nhận Đặt Lịch</span>
-                <span className="text-lg font-mono font-bold text-[var(--brand-gold)] mt-0.5 block">
-                  {successCode}
-                </span>
+              {/* VIP Ticket Card */}
+              <div className="bg-[var(--surface-low)] border border-[var(--brand-gold)]/40 rounded-xl p-5 text-left space-y-4 shadow-sm relative overflow-hidden">
+                <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                  <div>
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider block">Mã Xác Nhận VIP</span>
+                    <span className="text-lg font-mono font-bold text-[var(--brand-gold)] block">
+                      {successCode}
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(successCode);
+                      setCopied(true);
+                      toast.success("Đã sao chép mã đặt lịch!");
+                      setTimeout(() => setCopied(false), 2500);
+                    }}
+                    className="px-3 py-1.5 rounded bg-[var(--surface-base)] border border-[var(--border-subtle)] hover:border-[var(--brand-gold)] text-xs text-[var(--text-primary)] flex items-center gap-1.5 transition cursor-pointer"
+                  >
+                    {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copied ? "Đã chép" : "Sao chép"}</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase block">Mẫu xe</span>
+                    <strong className="text-[var(--text-primary)] font-semibold">{activeCarName}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase block">Khách hàng</span>
+                    <strong className="text-[var(--text-primary)] font-semibold">{name} ({phone})</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase block">Thời gian</span>
+                    <span className="text-[var(--text-primary)]">{date} · {timeSlot}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-[var(--text-muted)] uppercase block">Địa điểm</span>
+                    <span className="text-[var(--text-primary)]">
+                      {locationType === "showroom" ? "Showroom Atelier (KĐT Sala)" : `Tại nhà: ${address || "Theo yêu cầu"}`}
+                    </span>
+                  </div>
+                </div>
+
+                {/* QR Code Container */}
+                <div className="pt-3 border-t border-[var(--border-subtle)] flex flex-col sm:flex-row items-center gap-4 justify-between">
+                  <div className="space-y-1 text-center sm:text-left">
+                    <span className="text-[11px] font-semibold text-[var(--text-primary)] block">Vé Check-in Nhanh</span>
+                    <p className="text-[10px] text-[var(--text-muted)]">
+                      Quét mã QR tại bàn lễ tân khi quý khách tới showroom để nhận xe lái thử ngay.
+                    </p>
+                  </div>
+
+                  <div className="p-1.5 bg-white rounded-lg border border-[var(--border-subtle)] shadow-xs shrink-0">
+                    <img
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(successCode)}&color=0B0C0E&bgcolor=FFFFFF`}
+                      alt={`QR Code ${successCode}`}
+                      className="w-20 h-20"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <button
-                onClick={closeModal}
-                className="mt-3 px-6 py-2 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] text-xs uppercase tracking-wider font-semibold rounded-lg transition cursor-pointer shadow-sm"
-              >
-                Đóng Cửa Sổ
-              </button>
+              {/* Action Buttons: Add to Calendar & Print */}
+              <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+                <a
+                  href={getGoogleCalendarUrl({
+                    bookingCode: successCode,
+                    carName: activeCarName,
+                    date: date || new Date().toISOString().split("T")[0],
+                    timeSlot,
+                    locationType,
+                    address,
+                    customerName: name,
+                  })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-2 rounded-lg bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] border border-[var(--border-subtle)] hover:border-[var(--brand-gold)] text-xs text-[var(--text-primary)] transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <CalendarPlus className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
+                  <span>Google Calendar</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    downloadIcsFile({
+                      bookingCode: successCode,
+                      carName: activeCarName,
+                      date: date || new Date().toISOString().split("T")[0],
+                      timeSlot,
+                      locationType,
+                      address,
+                      customerName: name,
+                    })
+                  }
+                  className="px-3.5 py-2 rounded-lg bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] border border-[var(--border-subtle)] hover:border-[var(--brand-gold)] text-xs text-[var(--text-primary)] transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
+                  <span>Tải file .ICS</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-3.5 py-2 rounded-lg bg-[var(--surface-low)] hover:bg-[var(--surface-mid)] border border-[var(--border-subtle)] hover:border-[var(--brand-gold)] text-xs text-[var(--text-primary)] transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Printer className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
+                  <span>In vé</span>
+                </button>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  onClick={closeModal}
+                  className="w-full sm:w-auto px-8 py-2.5 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] text-xs uppercase tracking-wider font-semibold rounded-lg transition cursor-pointer shadow-sm"
+                >
+                  Hoàn Tất & Đóng
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">

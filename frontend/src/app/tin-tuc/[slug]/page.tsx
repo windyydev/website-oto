@@ -1,121 +1,84 @@
-"use client";
+import { Metadata } from "next";
+import ArticleDetailClient from "./ArticleDetailClient";
+import JsonLd, { generateArticleSchema, generateBreadcrumbSchema } from "@/components/seo/JsonLd";
 
-import { useEffect, useState, use } from "react";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { ChevronRight, Calendar, ArrowLeft, Share2, Sparkles } from "lucide-react";
-import { api } from "@/lib/api";
-
-interface Post {
-  id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  cover_url?: string;
-  category?: string;
-  published_at: string;
+interface PageProps {
+  params: Promise<{ slug: string }>;
 }
 
-export default function ArticleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = use(params);
-  const slug = resolvedParams.slug;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://atelier-automotive.vn";
 
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
+async function getPostData(slug: string) {
+  try {
+    const res = await fetch(`${API_URL}/posts/${slug}`, { next: { revalidate: 300 } });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    return null;
+  }
+}
 
-  useEffect(() => {
-    api
-      .get(`/posts/${slug}`)
-      .then((res) => setPost(res.data))
-      .catch((err) => {
-        console.error(err);
-        notFound();
-      })
-      .finally(() => setLoading(false));
-  }, [slug]);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostData(slug);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen py-32 flex flex-col items-center justify-center gap-3 bg-[var(--bg-app)] text-[var(--text-primary)]">
-        <div className="w-8 h-8 border-2 border-[var(--brand-gold)] border-t-transparent rounded-full animate-spin" />
-        <span className="text-xs text-[var(--text-secondary)]">Đang tải nội dung bài viết...</span>
-      </div>
-    );
+  if (!post) {
+    return {
+      title: "Tin Tức & Góc Nhìn Chuyên Gia | Atelier Curated Automotive",
+      description: "Các bài viết chuyên sâu về siêu xe, thị trường xe sang và cẩm nang thẩm định ô tô cao cấp.",
+    };
   }
 
-  if (!post) return notFound();
+  const title = post.title;
+  const description = post.excerpt || "Bài viết chuyên sâu từ Atelier Curated Automotive.";
+  const coverUrl = post.cover_url || `${SITE_URL}/og-news.jpg`;
+
+  return {
+    title: `${title} | Atelier Curated Automotive`,
+    description,
+    keywords: ["tin tức siêu xe", "kiểm định xe sang", "thị trường ô tô", post.category || "Atelier"],
+    openGraph: {
+      title: `${title} | Atelier Curated Automotive`,
+      description,
+      url: `${SITE_URL}/tin-tuc/${post.slug}`,
+      siteName: "Atelier Curated Automotive",
+      images: [
+        {
+          url: coverUrl,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+      type: "article",
+      publishedTime: post.published_at,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | Atelier Curated Automotive`,
+      description,
+      images: [coverUrl],
+    },
+  };
+}
+
+export default async function ArticleDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const post = await getPostData(slug);
+
+  const articleSchema = post ? generateArticleSchema(post) : null;
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Trang chủ", url: "/" },
+    { name: "Tin tức", url: "/tin-tuc" },
+    { name: post ? post.title : "Chi tiết bài viết", url: `/tin-tuc/${slug}` },
+  ]);
 
   return (
-    <article className="bg-[var(--bg-app)] min-h-screen pb-24 text-[var(--text-primary)]">
-      {/* Breadcrumb */}
-      <div className="bg-[var(--surface-mid)] border-b border-[var(--border-subtle)] py-4">
-        <div className="max-w-4xl mx-auto px-6 flex items-center justify-between text-xs text-[var(--text-secondary)]">
-          <div className="flex items-center gap-2">
-            <Link href="/" className="hover:text-[var(--text-primary)] transition">Trang chủ</Link>
-            <ChevronRight className="w-3 h-3 text-[var(--text-muted)]" />
-            <Link href="/tin-tuc" className="hover:text-[var(--text-primary)] transition">Tin tức</Link>
-            <ChevronRight className="w-3 h-3 text-[var(--text-muted)]" />
-            <span className="text-[var(--text-primary)] font-medium truncate max-w-xs">{post.title}</span>
-          </div>
-          <Link href="/tin-tuc" className="flex items-center gap-1 hover:text-[var(--text-primary)] transition">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Tất cả bài viết</span>
-          </Link>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-6 pt-12 space-y-8">
-        {/* Header */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 text-xs">
-            <span className="px-2.5 py-0.5 rounded bg-[var(--surface-low)] border border-[var(--border-subtle)] text-[var(--brand-gold)] font-semibold uppercase tracking-wider text-[10px]">
-              {post.category || "Bài Viết"}
-            </span>
-            <span className="text-[var(--text-secondary)]">
-              Xuất bản ngày {new Date(post.published_at).toLocaleDateString("vi-VN")}
-            </span>
-            <span className="text-[var(--text-muted)]">•</span>
-            <span className="text-[var(--text-secondary)]">Ban Biên Tập Atelier Curated</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-semibold text-[var(--text-primary)] leading-tight tracking-tight">
-            {post.title}
-          </h1>
-
-          <p className="text-base text-[var(--text-secondary)] font-light italic leading-relaxed border-l-2 border-[var(--brand-gold)] pl-4">
-            {post.excerpt}
-          </p>
-        </div>
-
-        {/* Cover Image */}
-        {post.cover_url && (
-          <div className="aspect-[16/9] rounded-2xl overflow-hidden border border-[var(--border-subtle)] shadow-md">
-            <img
-              src={post.cover_url}
-              alt={post.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-
-        {/* Content Body */}
-        <div
-          className="prose prose-zinc dark:prose-invert max-w-none text-sm sm:text-base leading-relaxed text-[var(--text-primary)] space-y-4 font-light"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
-
-        {/* Footer info & Return */}
-        <div className="pt-8 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs text-[var(--text-secondary)]">
-          <span>© Atelier Curated Automotive Magazine</span>
-          <Link
-            href="/tin-tuc"
-            className="px-4 py-2 bg-[var(--surface-inverted)] text-[var(--text-inverted)] rounded font-semibold text-xs hover:bg-[var(--brand-gold)] hover:text-[#121316] transition cursor-pointer shadow-sm"
-          >
-            Quay lại danh sách tin
-          </Link>
-        </div>
-      </div>
-    </article>
+    <>
+      {articleSchema && <JsonLd data={articleSchema} />}
+      <JsonLd data={breadcrumbSchema} />
+      <ArticleDetailClient slug={slug} />
+    </>
   );
 }

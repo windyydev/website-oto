@@ -4,8 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTestDrive } from "@/context/TestDriveContext";
-import { Menu, X, ArrowUpRight, Sparkles, Phone } from "lucide-react";
+import { Menu, X, ArrowUpRight, Sparkles, Phone, Heart, Scale } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { useWishlist } from "@/context/WishlistContext";
+import { useCompare } from "@/context/CompareContext";
 
 const navLinks = [
   { name: "Trang chủ", href: "/" },
@@ -19,6 +21,8 @@ const navLinks = [
 export default function Header() {
   const pathname = usePathname();
   const { openModal } = useTestDrive();
+  const { wishlistCount } = useWishlist();
+  const { compareCount } = useCompare();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // If inside /admin route, don't show public header
@@ -67,10 +71,38 @@ export default function Header() {
           </nav>
 
           {/* Desktop Right Action Buttons */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
+            {/* Wishlist Link */}
+            <Link
+              href="/yeu-thich"
+              className="relative p-2.5 text-[var(--text-secondary)] hover:text-[var(--brand-gold)] hover:bg-[var(--surface-low)] rounded-full transition"
+              title="Xe đã lưu yêu thích"
+            >
+              <Heart className={`w-4 h-4 ${wishlistCount > 0 ? "fill-rose-500 text-rose-500" : ""}`} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Compare Link */}
+            <Link
+              href="/so-sanh"
+              className="relative p-2.5 text-[var(--text-secondary)] hover:text-[var(--brand-gold)] hover:bg-[var(--surface-low)] rounded-full transition"
+              title="So sánh xe"
+            >
+              <Scale className="w-4 h-4" />
+              {compareCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-[var(--brand-gold)] text-[#0B0C0E] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center leading-none">
+                  {compareCount}
+                </span>
+              )}
+            </Link>
+
             <a
               href="tel:0908123456"
-              className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] hover:text-[var(--brand-gold)] transition px-3 py-2"
+              className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)] hover:text-[var(--brand-gold)] transition px-2 py-2"
             >
               <Phone className="w-3.5 h-3.5 text-[var(--brand-gold)]" />
               <span>0908 123 456</span>
@@ -78,9 +110,9 @@ export default function Header() {
 
             <button
               onClick={() => openModal()}
-              className="px-5 py-2.5 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] text-xs font-semibold uppercase tracking-wider rounded transition shadow-sm flex items-center gap-2 cursor-pointer"
+              className="px-4 py-2.5 bg-[var(--brand-gold)] hover:opacity-90 text-[#0B0C0E] text-xs font-semibold uppercase tracking-wider rounded transition shadow-sm flex items-center gap-1.5 cursor-pointer"
             >
-              <span>Đặt Lịch Lái Thử</span>
+              <span>Lái Thử</span>
               <ArrowUpRight className="w-3.5 h-3.5 text-[#0B0C0E]" />
             </button>
 
@@ -94,24 +126,50 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* Mobile right: phone icon + quick CTA + hamburger */}
-          <div className="flex md:hidden items-center gap-1.5">
+          {/* Mobile right: wishlist + compare + phone icon + quick CTA + hamburger */}
+          <div className="flex md:hidden items-center gap-1">
+            <Link
+              href="/yeu-thich"
+              className="relative p-2 text-[var(--text-secondary)] hover:text-rose-500 rounded-full transition"
+              aria-label="Xe yêu thích"
+            >
+              <Heart className={`w-4 h-4 ${wishlistCount > 0 ? "fill-rose-500 text-rose-500" : ""}`} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-rose-500 text-white text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+
+            <Link
+              href="/so-sanh"
+              className="relative p-2 text-[var(--text-secondary)] hover:text-[var(--brand-gold)] rounded-full transition"
+              aria-label="So sánh xe"
+            >
+              <Scale className="w-4 h-4" />
+              {compareCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-[var(--brand-gold)] text-[#0B0C0E] text-[9px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center leading-none">
+                  {compareCount}
+                </span>
+              )}
+            </Link>
+
             <a
               href="tel:0908123456"
-              className="p-2.5 text-[var(--brand-gold)] hover:bg-[var(--surface-low)] rounded-full transition"
+              className="p-2 text-[var(--brand-gold)] hover:bg-[var(--surface-low)] rounded-full transition"
               aria-label="Gọi điện"
             >
-              <Phone className="w-5 h-5" />
+              <Phone className="w-4 h-4" />
             </a>
             <button
               onClick={() => openModal()}
-              className="px-3 py-1.5 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-[11px] font-semibold uppercase rounded tracking-wider"
+              className="px-2.5 py-1.5 bg-[var(--brand-primary)] text-[var(--text-inverted)] text-[11px] font-semibold uppercase rounded tracking-wider"
             >
               Lái Thử
             </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-[var(--text-primary)] hover:bg-[var(--surface-low)] rounded transition flex items-center justify-center min-w-[44px] min-h-[44px]"
+              className="p-2 text-[var(--text-primary)] hover:bg-[var(--surface-low)] rounded transition flex items-center justify-center min-w-[40px] min-h-[40px]"
               aria-label={mobileMenuOpen ? "Đóng menu" : "Mở menu"}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

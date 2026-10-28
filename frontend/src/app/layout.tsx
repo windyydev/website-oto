@@ -3,9 +3,12 @@ import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { TestDriveProvider } from "@/context/TestDriveContext";
+import { WishlistProvider } from "@/context/WishlistContext";
+import { CompareProvider } from "@/context/CompareContext";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import TestDriveModal from "@/components/modals/TestDriveModal";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -18,8 +21,30 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Atelier Curated Automotive | Showroom Siêu Xe & Xe Sang Tuyển Chọn",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://atelier-automotive.vn"),
+  title: {
+    default: "Atelier Curated Automotive | Showroom Siêu Xe & Xe Sang Tuyển Chọn",
+    template: "%s | Atelier Curated Automotive",
+  },
   description: "Không gian trưng bày và phân phối xe thể thao, siêu xe và xe sang lướt nguyên bản đạt chuẩn kiểm định 160 điểm độc lập tại Việt Nam.",
+  keywords: ["showroom siêu xe", "xe sang", "Porsche", "Ferrari", "Mercedes-AMG", "xe lướt cao cấp", "Atelier Automotive"],
+  openGraph: {
+    type: "website",
+    locale: "vi_VN",
+    url: "https://atelier-automotive.vn",
+    siteName: "Atelier Curated Automotive",
+    title: "Atelier Curated Automotive | Showroom Siêu Xe & Xe Sang Tuyển Chọn",
+    description: "Không gian trưng bày và phân phối xe thể thao, siêu xe và xe sang lướt nguyên bản đạt chuẩn kiểm định 160 điểm độc lập tại Việt Nam.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Atelier Curated Automotive | Showroom Siêu Xe & Xe Sang Tuyển Chọn",
+    description: "Không gian trưng bày và phân phối xe thể thao, siêu xe và xe sang lướt nguyên bản đạt chuẩn kiểm định 160 điểm độc lập tại Việt Nam.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -39,10 +64,15 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           <TestDriveProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <TestDriveModal />
+            <WishlistProvider>
+              <CompareProvider>
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer />
+                <TestDriveModal />
+                <Toaster position="top-right" richColors />
+              </CompareProvider>
+            </WishlistProvider>
           </TestDriveProvider>
         </ThemeProvider>
       </body>
