@@ -8,6 +8,7 @@ import { CompareProvider } from "@/context/CompareContext";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import TestDriveModal from "@/components/modals/TestDriveModal";
+import AtelierConciergeChat from "@/components/chat/AtelierConciergeChat";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
@@ -70,6 +71,7 @@ export default function RootLayout({
                 <main className="flex-1">{children}</main>
                 <Footer />
                 <TestDriveModal />
+                <AtelierConciergeChat />
                 <Toaster position="top-right" richColors />
               </CompareProvider>
             </WishlistProvider>

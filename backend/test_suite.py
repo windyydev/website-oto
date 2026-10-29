@@ -210,6 +210,28 @@ class TestBackendAPI(unittest.TestCase):
             self.assertEqual(del_o.status_code, 200)
             print(f"==> [PASS] Cleaned up Test Color and Option on Car #{car_id}")
 
+    def test_11_ai_concierge_chat(self):
+        # 1. Test suggested prompts
+        p_res = client.get("/api/chat/suggested-prompts")
+        self.assertEqual(p_res.status_code, 200)
+        prompts = p_res.json()
+        self.assertIsInstance(prompts, list)
+        self.assertTrue(len(prompts) > 0)
+        print(f"==> [PASS] GET /api/chat/suggested-prompts ({len(prompts)} prompts)")
+
+        # 2. Test send message to AI Concierge
+        chat_payload = {
+            "message": "Tư vấn cho tôi mẫu SUV gầm cao đang có sẵn tại showroom",
+            "history": []
+        }
+        c_res = client.post("/api/chat", json=chat_payload)
+        self.assertEqual(c_res.status_code, 200)
+        chat_data = c_res.json()
+        self.assertIn("reply", chat_data)
+        self.assertIn("suggested_cars", chat_data)
+        self.assertTrue(len(chat_data["reply"]) > 10)
+        print(f"==> [PASS] POST /api/chat (Reply length: {len(chat_data['reply'])} chars, Suggested cars: {len(chat_data['suggested_cars'])})")
+
 
 
 if __name__ == "__main__":

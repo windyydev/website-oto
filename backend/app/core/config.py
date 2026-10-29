@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     ADMIN_EMAIL: str = "admin@atelier.vn"
     ADMIN_PASSWORD: str = "Atelier@2026!"
 
+    # Google Gemini AI API
+    GEMINI_API_KEY: str = ""
+
+
     class Config:
         env_file = ".env"
         extra = "ignore"

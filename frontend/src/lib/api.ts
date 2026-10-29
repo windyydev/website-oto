@@ -402,3 +402,41 @@ export const authApi = {
     return null;
   },
 };
+
+export interface SuggestedCarCard {
+  id: number;
+  name: string;
+  slug: string;
+  price: number;
+  year: number;
+  body_type: string;
+  fuel_type: string;
+  condition: string;
+  primary_image?: string | null;
+  monthly_installment?: number | null;
+}
+
+export interface ChatMessage {
+  role: "user" | "model" | "assistant";
+  content: string;
+  suggested_cars?: SuggestedCarCard[];
+  action_taken?: string | null;
+  timestamp?: string;
+}
+
+export interface ChatResponse {
+  reply: string;
+  suggested_cars: SuggestedCarCard[];
+  action_taken?: string | null;
+}
+
+export const chatApi = {
+  sendMessage: async (message: string, history: { role: string; content: string }[] = []): Promise<ChatResponse> => {
+    const res = await api.post("/chat", { message, history });
+    return res.data;
+  },
+  getSuggestedPrompts: async (): Promise<string[]> => {
+    const res = await api.get("/chat/suggested-prompts");
+    return res.data;
+  },
+};
