@@ -17,16 +17,17 @@ logger = logging.getLogger(__name__)
 SYSTEM_INSTRUCTION = """Bạn là "Atelier VIP Concierge" - Giám đốc trải nghiệm & Trợ lý tư vấn xe sang riêng tư của Showroom Atelier Automotive (Khu đô thị Sala, TP. Thủ Đức, TP. Hồ Chí Minh).
 
 Nguyên tắc ứng xử & phong thái giao tiếp:
-1. "Quiet Luxury" - Tinh tế, điềm đạm, đẳng cấp, am hiểu sâu sắc về văn hóa chơi xe và giá trị trải nghiệm.
+1. "Quiet Luxury" - Tinh tế, điềm đạm, khiêm nhường nhưng thể hiện đẳng cấp thượng lưu và sự am hiểu sâu sắc về xe hơi.
 2. Xưng "Em" và gọi khách hàng là "Quý khách" hoặc "Anh/Chị".
 3. Trả lời bằng tiếng Việt chuẩn mực, lưu loát, bố cục thẩm mỹ cao (in đậm tên xe, gạch đầu dòng rõ ràng, làm nổi bật giá bán và đặc tính nổi bật).
 4. TUYỆT ĐỐI CHỈ TƯ VẤN các mẫu xe có trong danh sách KHO XE THỰC TẾ được cung cấp trong ngữ cảnh. Không bịa đặt thông tin xe không tồn tại trong kho.
-5. Khi khách hàng hỏi về thủ tục trả góp, hãy giải thích rõ ràng tiền trả trước, số tiền vay và khoản góp hàng tháng dựa trên bảng tính tài chính đính kèm.
-6. Khi khách hàng để lại số điện thoại hoặc đặt hẹn, hãy gửi lời cảm ơn trân trọng và xác nhận chuyên viên cao cấp của Atelier sẽ liên hệ riêng trong vòng 15 phút.
-7. Thân thiện mời Quý khách ghé thăm Atelier Showroom tại Sala để trải nghiệm không gian riêng tư, thưởng thức trà/cà phê thượng hạng và lái thử xe."""
+5. Khi khách hàng hỏi về tầm giá nhất định (ví dụ tầm 600 - 700 triệu), hãy nhiệt tình giới thiệu các mẫu xe có giá phù hợp nhất đang có sẵn tại showroom, nêu rõ ưu điểm về độ bền bỉ, tiết kiệm và trải nghiệm lái.
+6. Khi khách hàng hỏi về thủ tục trả góp, hãy giải thích rõ ràng tiền trả trước, số tiền vay và khoản góp hàng tháng dựa trên bảng tính tài chính đính kèm.
+7. Khi khách hàng để lại số điện thoại hoặc đặt hẹn, hãy gửi lời cảm ơn trân trọng và xác nhận chuyên viên cao cấp của Atelier sẽ liên hệ riêng trong vòng 15 phút.
+8. Thân thiện mời Quý khách ghé thăm Atelier Showroom tại Sala để trải nghiệm không gian riêng tư, thưởng thức trà/cà phê thượng hạng và lái thử xe."""
 
 def format_vnd(amount: Optional[float]) -> str:
-    """Format tiền VNĐ dễ đọc (ví dụ: 4 tỷ 250 triệu VNĐ)"""
+    """Format tiền VNĐ dễ đọc (ví dụ: 680 triệu VNĐ, 4 tỷ 250 triệu VNĐ)"""
     if not amount:
         return "Liên hệ Atelier"
     ty = amount / 1_000_000_000
@@ -107,32 +108,51 @@ class AtelierChatService:
             phone = phone_match.group(0)
             lead_info = {"phone": phone}
             
-        # 2. Phát hiện ngân sách
+        # 2. Phát hiện ngân sách (cả TỶ và TRIỆU)
         min_price = None
         max_price = None
         
         ty_matches = re.findall(r'(\d+(?:[.,]\d+)?)\s*(?:tỷ|ty|tỉ)', msg)
-        if "dưới" in msg or "tầm" in msg or "khoảng" in msg or "dưới" in msg or "<" in msg:
-            if ty_matches:
-                val = float(ty_matches[0].replace(',', '.')) * 1_000_000_000
-                max_price = val
+        trieu_matches = re.findall(r'(\d+(?:[.,]\d+)?)\s*(?:triệu|trieu|tr|củ)', msg)
+        
+        if ty_matches:
+            val = float(ty_matches[0].replace(',', '.')) * 1_000_000_000
+            if any(w in msg for w in ["dưới", "tầm", "khoảng", "<", "đổ lại", "trở lại"]):
+                max_price = val * 1.1
                 min_price = max(0, val - 2_000_000_000)
-        elif len(ty_matches) >= 2:
-            val1 = float(ty_matches[0].replace(',', '.')) * 1_000_000_000
-            val2 = float(ty_matches[1].replace(',', '.')) * 1_000_000_000
-            min_price = min(val1, val2)
-            max_price = max(val1, val2)
+            elif len(ty_matches) >= 2:
+                val1 = float(ty_matches[0].replace(',', '.')) * 1_000_000_000
+                val2 = float(ty_matches[1].replace(',', '.')) * 1_000_000_000
+                min_price = min(val1, val2)
+                max_price = max(val1, val2)
+            else:
+                max_price = val * 1.15
+                min_price = val * 0.85
+        elif trieu_matches:
+            val = float(trieu_matches[0].replace(',', '.')) * 1_000_000
+            if any(w in msg for w in ["dưới", "tầm", "khoảng", "<", "đổ lại", "trở lại"]):
+                # Cho phép xê xích nhẹ lên 15% để bắt các dòng xe ~670-680 triệu như Xforce, Xpander Cross
+                max_price = val * 1.18
+                min_price = max(0, val - 350_000_000)
+            elif len(trieu_matches) >= 2:
+                val1 = float(trieu_matches[0].replace(',', '.')) * 1_000_000
+                val2 = float(trieu_matches[1].replace(',', '.')) * 1_000_000
+                min_price = min(val1, val2)
+                max_price = max(val1, val2)
+            else:
+                max_price = val * 1.2
+                min_price = val * 0.8
             
         # 3. Phát hiện hãng xe
         brand_filter = None
-        for b in ["porsche", "mercedes", "mec", "bmw", "lexus", "audi", "land rover", "range rover", "bentley", "rolls-royce", "ferrari", "lamborghini"]:
+        for b in ["porsche", "mercedes", "mec", "bmw", "lexus", "audi", "land rover", "range rover", "bentley", "rolls-royce", "mazda", "ford", "kia", "mitsubishi", "honda", "toyota", "hyundai"]:
             if b in msg:
                 brand_filter = "mercedes" if b == "mec" else b
                 break
                 
         # 4. Phát hiện kiểu dáng
         body_filter = None
-        for bd in ["suv", "sedan", "coupe", "convertible", "mui trần", "thể thao"]:
+        for bd in ["suv", "sedan", "coupe", "convertible", "mui trần", "thể thao", "mpv", "crossover"]:
             if bd in msg:
                 body_filter = "convertible" if bd == "mui trần" else bd
                 break
@@ -149,10 +169,13 @@ class AtelierChatService:
         if max_price is not None:
             query = query.filter(Car.price <= max_price)
             
-        cars = query.order_by(desc(Car.is_featured), desc(Car.id)).limit(4).all()
+        cars = query.order_by(Car.price.asc() if max_price and max_price < 1_500_000_000 else desc(Car.is_featured)).limit(4).all()
         
-        # Nếu bộ lọc quá chặt không ra kết quả nào, lấy top xe nổi bật
-        if not cars:
+        # Nếu bộ lọc quá chặt không ra kết quả nào, lấy xe có giá gần nhất
+        if not cars and (min_price is not None or max_price is not None):
+            target = max_price if max_price else (min_price if min_price else 1_000_000_000)
+            cars = db.query(Car).filter(Car.status == CarStatus.available).order_by(Car.price.asc()).limit(4).all()
+        elif not cars:
             cars = db.query(Car).filter(Car.status == CarStatus.available).order_by(desc(Car.is_featured), desc(Car.id)).limit(4).all()
             
         car_dicts = [_car_to_dict(c) for c in cars]
@@ -164,6 +187,11 @@ class AtelierChatService:
             if ty_matches:
                 try:
                     ref_price = float(ty_matches[0].replace(',', '.')) * 1_000_000_000
+                except Exception:
+                    pass
+            elif trieu_matches:
+                try:
+                    ref_price = float(trieu_matches[0].replace(',', '.')) * 1_000_000
                 except Exception:
                     pass
             loan_info = calculate_loan_breakdown(ref_price)
@@ -234,16 +262,28 @@ class AtelierChatService:
 
         full_context_text = "\n".join(context_parts)
 
-        # 4. Chuẩn bị hội thoại gửi Gemini
+        # 4. Chuẩn hóa Lịch sử trò chuyện gửi lên Gemini (bắt buộc role luân phiên user -> model -> user)
         contents = []
         if history:
-            for msg in history[-6:]:
-                contents.append({
-                    "role": "user" if msg.role in ["user", "human"] else "model",
-                    "parts": [{"text": msg.content}]
-                })
+            # Lọc bỏ tin nhắn rỗng hoặc tin nhắn đầu tiên nếu là model (vì Gemini yêu cầu bắt đầu bằng user)
+            filtered_history = []
+            for h in history:
+                if not h.content:
+                    continue
+                role_name = "user" if h.role in ["user", "human"] else "model"
+                # Nếu mảng đang rỗng mà tin nhắn là model thì bỏ qua
+                if not filtered_history and role_name == "model":
+                    continue
+                # Tránh 2 tin nhắn cùng role liên tiếp
+                if filtered_history and filtered_history[-1]["role"] == role_name:
+                    filtered_history[-1]["parts"][0]["text"] += f"\n{h.content}"
+                else:
+                    filtered_history.append({"role": role_name, "parts": [{"text": h.content}]})
+                    
+            # Giữ tối đa 4 tin nhắn gần nhất
+            contents.extend(filtered_history[-4:])
 
-        # Ghép System instruction và context vào lượt nhắn cuối
+        # Lượt gửi cuối cùng (luôn là role user)
         final_prompt = (
             f"{SYSTEM_INSTRUCTION}\n\n"
             f"--- BỐI CẢNH THỰC TẾ TỪ CƠ SỞ DỮ LIỆU ATELIER ---\n"
@@ -251,10 +291,15 @@ class AtelierChatService:
             f"--------------------------------------------------\n\n"
             f"Câu hỏi của Quý khách: {user_message}"
         )
-        contents.append({
-            "role": "user",
-            "parts": [{"text": final_prompt}]
-        })
+        
+        # Nếu phần tử cuối của contents đã là user thì merge, nếu không thì append
+        if contents and contents[-1]["role"] == "user":
+            contents[-1]["parts"] = [{"text": final_prompt}]
+        else:
+            contents.append({
+                "role": "user",
+                "parts": [{"text": final_prompt}]
+            })
 
         payload = {
             "contents": contents,
@@ -264,9 +309,9 @@ class AtelierChatService:
             }
         }
 
-        # 5. Gọi Gemini API
+        # 5. Gọi Gemini API (Sử dụng trust_env=False để kết nối trực tiếp, bypass proxy cục bộ)
         try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
+            async with httpx.AsyncClient(trust_env=False, timeout=12.0) as client:
                 resp = await client.post(self.endpoint, json=payload)
                 if resp.status_code == 200:
                     cand = resp.json().get("candidates", [])[0]

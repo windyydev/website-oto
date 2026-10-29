@@ -90,11 +90,14 @@ export default function AtelierConciergeChat() {
     setIsLoading(true);
 
     try {
-      // Chuẩn bị lịch sử hội thoại gửi lên backend
-      const historyPayload = newMessages.map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
+      // Chuẩn bị lịch sử hội thoại gửi lên backend:
+      // Bỏ qua tin nhắn chào mừng mặc định đầu tiên và chỉ gửi các tin nhắn trước đó
+      const historyPayload = messages
+        .filter((_, idx) => idx > 0)
+        .map((m) => ({
+          role: m.role,
+          content: m.content,
+        }));
 
       const res = await chatApi.sendMessage(text, historyPayload);
 
