@@ -29,7 +29,7 @@ class CarColorBase(BaseModel):
     is_default: bool = False
 
 class CarColorCreate(CarColorBase):
-    car_id: int
+    car_id: Optional[int] = None
 
 class CarColorResponse(CarColorBase):
     id: int
@@ -49,7 +49,8 @@ class CarOptionBase(BaseModel):
     sort_order: int = 0
 
 class CarOptionCreate(CarOptionBase):
-    car_id: int
+    car_id: Optional[int] = None
+
 
 class CarOptionResponse(CarOptionBase):
     id: int

@@ -5,7 +5,7 @@ from app.core.database import get_db
 from app.core.security import get_current_admin
 from app.models.category import Category
 from app.models.car import Car
-from app.schemas.category import CategoryResponse, CategoryTreeResponse, CategoryCreate
+from app.schemas.category import CategoryResponse, CategoryTreeResponse, CategoryCreate, CategoryUpdate
 
 router = APIRouter()
 
@@ -74,6 +74,32 @@ def create_category(
     db.commit()
     db.refresh(new_cat)
     return new_cat
+
+@router.put("/{id}", response_model=CategoryResponse)
+def update_category(
+    id: int,
+    cat_in: CategoryUpdate,
+    db: Session = Depends(get_db),
+    admin: dict = Depends(get_current_admin)
+):
+    """Cập nhật thông tin danh mục trong cây phân cấp."""
+    cat = db.query(Category).filter(Category.id == id).first()
+    if not cat:
+        raise HTTPException(status_code=404, detail="Không tìm thấy danh mục")
+
+    update_data = cat_in.model_dump(exclude_unset=True)
+
+    if "slug" in update_data and update_data["slug"] != cat.slug:
+        existing = db.query(Category).filter(Category.slug == update_data["slug"], Category.id != id).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Slug danh mục đã tồn tại")
+
+    for field, value in update_data.items():
+        setattr(cat, field, value)
+
+    db.commit()
+    db.refresh(cat)
+    return cat
 
 @router.delete("/{id}")
 def delete_category(

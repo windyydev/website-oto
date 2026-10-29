@@ -184,7 +184,9 @@ def add_car_color(
     if not car:
         raise HTTPException(status_code=404, detail="Không tìm thấy xe")
 
-    new_color = CarColor(car_id=id, **color_data.model_dump())
+    color_dict = color_data.model_dump()
+    color_dict.pop("car_id", None)
+    new_color = CarColor(car_id=id, **color_dict)
     db.add(new_color)
     db.commit()
     db.refresh(new_color)
@@ -218,11 +220,14 @@ def add_car_option(
     if not car:
         raise HTTPException(status_code=404, detail="Không tìm thấy xe")
 
-    new_opt = CarOption(car_id=id, **opt_data.model_dump())
+    opt_dict = opt_data.model_dump()
+    opt_dict.pop("car_id", None)
+    new_opt = CarOption(car_id=id, **opt_dict)
     db.add(new_opt)
     db.commit()
     db.refresh(new_opt)
     return new_opt
+
 
 @router.delete("/{id}/options/{option_id}")
 def delete_car_option(

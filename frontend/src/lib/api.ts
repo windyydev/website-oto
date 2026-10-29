@@ -208,6 +208,36 @@ export const adminApi = {
     const res = await api.get("/categories/", { params });
     return res.data;
   },
+  createCategory: async (data: Partial<Category>): Promise<Category> => {
+    const res = await api.post("/categories/", data);
+    return res.data;
+  },
+  updateCategory: async (id: number, data: Partial<Category>): Promise<Category> => {
+    const res = await api.put(`/categories/${id}`, data);
+    return res.data;
+  },
+  deleteCategory: async (id: number) => {
+    const res = await api.delete(`/categories/${id}`);
+    return res.data;
+  },
+
+  // Car Colors & Options
+  addCarColor: async (carId: number, data: Partial<CarColor>): Promise<CarColor> => {
+    const res = await api.post(`/cars/${carId}/colors`, data);
+    return res.data;
+  },
+  deleteCarColor: async (carId: number, colorId: number) => {
+    const res = await api.delete(`/cars/${carId}/colors/${colorId}`);
+    return res.data;
+  },
+  addCarOption: async (carId: number, data: Partial<CarOption>): Promise<CarOption> => {
+    const res = await api.post(`/cars/${carId}/options`, data);
+    return res.data;
+  },
+  deleteCarOption: async (carId: number, optionId: number) => {
+    const res = await api.delete(`/cars/${carId}/options/${optionId}`);
+    return res.data;
+  },
 
   // Cars
   getCars: async (params?: {

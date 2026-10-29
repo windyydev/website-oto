@@ -11,9 +11,13 @@ import {
   Star, 
   Sparkles, 
   AlertCircle,
-  CarFront
+  CarFront,
+  Plus,
+  Trash2,
+  ShieldCheck,
+  Cpu
 } from "lucide-react";
-import { adminApi, Brand } from "@/lib/api";
+import { adminApi, Brand, Category } from "@/lib/api";
 import { slugify } from "@/lib/utils";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 
@@ -29,6 +33,7 @@ export default function CreateCarPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [brands, setBrands] = useState<Brand[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +42,7 @@ export default function CreateCarPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [brandId, setBrandId] = useState<number | "">("");
+  const [categoryId, setCategoryId] = useState<number | "">("");
   const [price, setPrice] = useState<number | "">("");
   const [monthlyInstallment, setMonthlyInstallment] = useState<number | "">("");
   const [year, setYear] = useState<number>(new Date().getFullYear());
@@ -51,20 +57,33 @@ export default function CreateCarPage() {
   const [interior, setInterior] = useState("");
   const [description, setDescription] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
+  const [isInspected, setIsInspected] = useState(true);
+
+  // Specs state
+  const [specs, setSpecs] = useState<Array<{ group: string; label: string; value: string }>>([
+    { group: "Động cơ & Hiệu năng", label: "Kiểu động cơ", value: "V6 Twin-Turbo" },
+    { group: "Động cơ & Hiệu năng", label: "Công suất cực đại", value: "450 mã lực" },
+    { group: "Động cơ & Hiệu năng", label: "Tăng tốc 0-100 km/h", value: "3.8 giây" },
+    { group: "Động cơ & Hiệu năng", label: "Tốc độ tối đa", value: "305 km/h" },
+  ]);
 
   // Images state
   const [selectedFiles, setSelectedFiles] = useState<SelectedFile[]>([]);
   const [defaultCategory, setDefaultCategory] = useState<"exterior" | "interior" | "dashboard" | "wheels">("exterior");
 
   useEffect(() => {
-    fetchBrands();
+    fetchInitialData();
   }, []);
 
-  const fetchBrands = async () => {
+  const fetchInitialData = async () => {
     try {
-      const data = await adminApi.getBrands();
-      setBrands(data);
-      if (data.length > 0) setBrandId(data[0].id);
+      const [brandsData, catsData] = await Promise.all([
+        adminApi.getBrands(),
+        adminApi.getCategories(),
+      ]);
+      setBrands(brandsData);
+      setCategories(catsData);
+      if (brandsData.length > 0) setBrandId(brandsData[0].id);
     } catch (err) {
       console.error(err);
     }
@@ -130,6 +149,7 @@ export default function CreateCarPage() {
       // 1. Tạo bản ghi Car trong Database
       const carData = {
         brand_id: Number(brandId),
+        category_id: categoryId ? Number(categoryId) : undefined,
         name,
         slug: slug || slugify(name),
         price: Number(price),
@@ -146,6 +166,8 @@ export default function CreateCarPage() {
         interior,
         description,
         is_featured: isFeatured,
+        is_inspected: isInspected,
+        specs: specs.filter((s) => s.label.trim() && s.value.trim()),
       };
 
       const createdCar = await adminApi.createCar(carData);
@@ -271,6 +293,23 @@ export default function CreateCarPage() {
                 {brands.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Phân cấp danh mục */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-[var(--text-secondary)]">Phân cấp Danh mục xe</label>
+              <select
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value === "" ? "" : Number(e.target.value))}
+                className="w-full px-3.5 py-2.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
+              >
+                <option value="">-- Chưa gắn danh mục --</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {"— ".repeat((c.level || 1) - 1)} {c.name}
                   </option>
                 ))}
               </select>
@@ -464,13 +503,93 @@ export default function CreateCarPage() {
           </div>
         </div>
 
-        {/* Section 3: Upload ảnh Cloudinary */}
+        {/* Section 3: Bảng thông số kỹ thuật động học */}
+        <div className="p-6 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg space-y-4 shadow-xs">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
+              <Cpu className="w-4 h-4 text-[var(--brand-gold)]" />
+              <span>3. Bảng Thông Số Động Học & Kỹ Thuật (Specs)</span>
+            </h2>
+            <button
+              type="button"
+              onClick={() => setSpecs([...specs, { group: "Động cơ & Hiệu năng", label: "", value: "" }])}
+              className="text-xs text-[var(--brand-gold)] hover:underline flex items-center gap-1 cursor-pointer font-medium"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Thêm thông số</span>
+            </button>
+          </div>
+
+          <div className="space-y-2.5">
+            {specs.map((spec, idx) => (
+              <div key={idx} className="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                <input
+                  type="text"
+                  placeholder="Nhóm (VD: Động cơ)"
+                  value={spec.group}
+                  onChange={(e) => {
+                    const updated = [...specs];
+                    updated[idx].group = e.target.value;
+                    setSpecs(updated);
+                  }}
+                  className="sm:col-span-4 px-3 py-1.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
+                />
+                <input
+                  type="text"
+                  placeholder="Tên thông số (VD: Công suất)"
+                  value={spec.label}
+                  onChange={(e) => {
+                    const updated = [...specs];
+                    updated[idx].label = e.target.value;
+                    setSpecs(updated);
+                  }}
+                  className="sm:col-span-4 px-3 py-1.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)]"
+                />
+                <input
+                  type="text"
+                  placeholder="Giá trị (VD: 450 mã lực)"
+                  value={spec.value}
+                  onChange={(e) => {
+                    const updated = [...specs];
+                    updated[idx].value = e.target.value;
+                    setSpecs(updated);
+                  }}
+                  className="sm:col-span-3 px-3 py-1.5 bg-[var(--surface-low)] border border-[var(--border-subtle)] rounded-lg text-xs text-[var(--text-primary)] focus:outline-none focus:border-[var(--brand-gold)] font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setSpecs(specs.filter((_, i) => i !== idx))}
+                  className="sm:col-span-1 p-1.5 text-[var(--text-muted)] hover:text-red-500 transition text-center flex items-center justify-center cursor-pointer"
+                  title="Xóa thông số này"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-2 border-t border-[var(--border-subtle)] flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="isInspectedCheck"
+              checked={isInspected}
+              onChange={(e) => setIsInspected(e.target.checked)}
+              className="w-4 h-4 rounded accent-[var(--brand-gold)]"
+            />
+            <label htmlFor="isInspectedCheck" className="text-xs text-[var(--text-primary)] cursor-pointer flex items-center gap-1.5">
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <span>Đã kiểm định 150 điểm chất lượng độc lập Atelier Verified</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Section 4: Upload ảnh Cloudinary */}
         <div className="p-6 bg-[var(--surface-base)] border border-[var(--border-subtle)] rounded-lg space-y-5 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <h2 className="text-sm font-semibold text-[var(--text-primary)] flex items-center gap-2">
                 <UploadCloud className="w-5 h-5 text-[var(--brand-gold)]" />
-                3. Bộ Ảnh Chi Tiết Xe (Cloudinary Storage)
+                4. Bộ Ảnh Chi Tiết Xe (Cloudinary Storage)
               </h2>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">
                 Kéo thả hoặc chọn nhiều ảnh. Ảnh sẽ tự động tối ưu và lưu vào Cloudinary.

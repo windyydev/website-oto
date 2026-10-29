@@ -134,6 +134,83 @@ class TestBackendAPI(unittest.TestCase):
             self.assertEqual(del_res.status_code, 200)
             print(f"==> [PASS] DELETE /api/posts/{post_id} (Cleaned up test post)")
 
+    def test_09_category_admin_crud(self):
+        from app.core.security import create_access_token
+        token = create_access_token({"sub": "admin", "role": "admin"})
+        headers = {"Authorization": f"Bearer {token}"}
+
+        # 1. Create a category
+        cat_slug = "test-phan-khuc-xe-dua-2026"
+        payload = {
+            "name": "Phân khúc Xe Đua F1 Test",
+            "slug": cat_slug,
+            "description": "Danh mục thử nghiệm tự động",
+            "level": 1,
+            "sort_order": 99
+        }
+        res = client.post("/api/categories/", json=payload, headers=headers)
+        self.assertIn(res.status_code, [200, 400])
+        if res.status_code == 200:
+            cat_id = res.json()["id"]
+            print(f"==> [PASS] POST /api/categories/ (Created Category ID: {cat_id})")
+
+            # 2. Update category
+            update_res = client.put(f"/api/categories/{cat_id}", json={"name": "Phân khúc Xe Đua Updated"}, headers=headers)
+            self.assertEqual(update_res.status_code, 200)
+            self.assertEqual(update_res.json()["name"], "Phân khúc Xe Đua Updated")
+            print(f"==> [PASS] PUT /api/categories/{cat_id} (Updated Category)")
+
+            # 3. Delete category
+            del_res = client.delete(f"/api/categories/{cat_id}", headers=headers)
+            self.assertEqual(del_res.status_code, 200)
+            print(f"==> [PASS] DELETE /api/categories/{cat_id} (Deleted Category)")
+
+    def test_10_car_color_and_option_flow(self):
+        from app.core.security import create_access_token
+        token = create_access_token({"sub": "admin", "role": "admin"})
+        headers = {"Authorization": f"Bearer {token}"}
+
+        # Fetch one car
+        cars_res = client.get("/api/cars/?page=1&page_size=1")
+        items = cars_res.json().get("items", [])
+        if items:
+            car_id = items[0]["id"]
+            
+            # 1. Add color
+            color_payload = {
+                "name": "Test Ruby Star Neo",
+                "hex_code": "#881337",
+                "color_type": "bespoke",
+                "price_delta": 150000000,
+                "is_default": False,
+                "images": ["https://images.unsplash.com/photo-1503376780353-7e6692767b70"]
+            }
+            c_res = client.post(f"/api/cars/{car_id}/colors", json=color_payload, headers=headers)
+            self.assertEqual(c_res.status_code, 200)
+            color_id = c_res.json()["id"]
+            print(f"==> [PASS] POST /api/cars/{car_id}/colors (Added Color ID: {color_id})")
+
+            # 2. Add option
+            opt_payload = {
+                "group": "Mâm xe & Lốp",
+                "name": "Mâm Test RS Spyder 21 inch",
+                "code": "46M",
+                "price": 280000000,
+                "is_standard": False
+            }
+            o_res = client.post(f"/api/cars/{car_id}/options", json=opt_payload, headers=headers)
+            self.assertEqual(o_res.status_code, 200)
+            opt_id = o_res.json()["id"]
+            print(f"==> [PASS] POST /api/cars/{car_id}/options (Added Option ID: {opt_id})")
+
+            # 3. Clean up
+            del_c = client.delete(f"/api/cars/{car_id}/colors/{color_id}", headers=headers)
+            self.assertEqual(del_c.status_code, 200)
+            del_o = client.delete(f"/api/cars/{car_id}/options/{opt_id}", headers=headers)
+            self.assertEqual(del_o.status_code, 200)
+            print(f"==> [PASS] Cleaned up Test Color and Option on Car #{car_id}")
+
+
 
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestBackendAPI)
