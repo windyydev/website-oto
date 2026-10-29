@@ -137,6 +137,25 @@ export interface TestDrive {
   notes?: string;
 }
 
+export interface Post {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  cover_url?: string;
+  category?: string;
+  is_published: boolean;
+  published_at: string;
+}
+
+export interface PostListResponse {
+  items: Post[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
 export interface StatsResponse {
   stats: {
     total_cars: number;
@@ -260,6 +279,43 @@ export const adminApi = {
   },
   getTestDrives: async (): Promise<TestDrive[]> => {
     const res = await api.get("/leads/test-drives");
+    return res.data;
+  },
+
+  // Posts / News & Articles
+  getAdminPosts: async (params?: {
+    page?: number;
+    page_size?: number;
+    search?: string;
+    category?: string;
+    is_published?: boolean;
+  }): Promise<PostListResponse> => {
+    const res = await api.get("/posts/admin/all", { params });
+    return res.data;
+  },
+  getPostById: async (id: number): Promise<Post> => {
+    const res = await api.get(`/posts/id/${id}`);
+    return res.data;
+  },
+  createPost: async (data: Partial<Post>): Promise<Post> => {
+    const res = await api.post("/posts/", data);
+    return res.data;
+  },
+  updatePost: async (id: number, data: Partial<Post>): Promise<Post> => {
+    const res = await api.put(`/posts/${id}`, data);
+    return res.data;
+  },
+  deletePost: async (id: number) => {
+    const res = await api.delete(`/posts/${id}`);
+    return res.data;
+  },
+  uploadGeneralImage: async (file: File, folder: string = "articles"): Promise<{ url: string; file_id: string }> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("folder", folder);
+    const res = await api.post("/upload/general", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return res.data;
   },
 };

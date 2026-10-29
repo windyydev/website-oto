@@ -17,7 +17,8 @@ import {
   FileDown,
   Sparkles,
   ChevronRight,
-  LogOut
+  LogOut,
+  Newspaper
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
@@ -77,6 +78,12 @@ const navigation: NavItem[] = [
     href: "/admin/brands",
     path: "/admin/brands",
     icon: Tag,
+  },
+  { 
+    name: "Tin tức & Tạp chí", 
+    href: "/admin/posts",
+    path: "/admin/posts",
+    icon: Newspaper,
   },
   { 
     name: "Đăng tải xe mới", 

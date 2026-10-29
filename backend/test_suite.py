@@ -92,6 +92,49 @@ class TestBackendAPI(unittest.TestCase):
         self.assertIsInstance(posts, list)
         print(f"==> [PASS] GET /api/posts/ (Found {len(posts)} articles)")
 
+    def test_08_post_admin_crud(self):
+        from app.core.security import create_access_token
+        token = create_access_token({"sub": "admin", "role": "admin"})
+        headers = {"Authorization": f"Bearer {token}"}
+
+        # 1. Create a test post
+        test_slug = "bai-viet-test-kiem-thu-tu-dong-2026"
+        payload = {
+            "title": "Bài viết test kiểm thử tự động 2026",
+            "slug": test_slug,
+            "excerpt": "Tóm tắt bài viết test tự động",
+            "content": "Nội dung bài viết chi tiết phục vụ test suite tự động.",
+            "cover_url": "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
+            "category": "Đánh giá xe",
+            "is_published": True
+        }
+        create_res = client.post("/api/posts/", json=payload, headers=headers)
+        self.assertIn(create_res.status_code, [200, 400]) # if 400 it might exist already
+        post_id = None
+        if create_res.status_code == 200:
+            post_id = create_res.json()["id"]
+            print(f"==> [PASS] POST /api/posts/ (Created Post ID: {post_id})")
+
+        # 2. Get admin posts
+        admin_list_res = client.get("/api/posts/admin/all", headers=headers)
+        self.assertEqual(admin_list_res.status_code, 200)
+        admin_data = admin_list_res.json()
+        self.assertIn("items", admin_data)
+        self.assertIn("total", admin_data)
+        print(f"==> [PASS] GET /api/posts/admin/all (Total in Admin: {admin_data['total']})")
+
+        # 3. If created, update and then delete it
+        if post_id:
+            update_res = client.put(f"/api/posts/{post_id}", json={"title": "Bài viết đã cập nhật tiêu đề"}, headers=headers)
+            self.assertEqual(update_res.status_code, 200)
+            self.assertEqual(update_res.json()["title"], "Bài viết đã cập nhật tiêu đề")
+            print(f"==> [PASS] PUT /api/posts/{post_id} (Updated Post)")
+
+            del_res = client.delete(f"/api/posts/{post_id}", headers=headers)
+            self.assertEqual(del_res.status_code, 200)
+            print(f"==> [PASS] DELETE /api/posts/{post_id} (Cleaned up test post)")
+
+
 if __name__ == "__main__":
     suite = unittest.TestLoader().loadTestsFromTestCase(TestBackendAPI)
     runner = unittest.TextTestRunner(verbosity=2)
