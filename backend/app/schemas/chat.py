@@ -25,3 +25,4 @@ class ChatResponse(BaseModel):
     reply: str = Field(..., description="Câu trả lời của Atelier Concierge AI")
     suggested_cars: List[SuggestedCarCard] = Field(default=[], description="Danh sách xe gợi ý nếu có")
     action_taken: Optional[str] = Field(None, description="Hành động hệ thống đã thực thi (ví dụ: lead_created)")
+

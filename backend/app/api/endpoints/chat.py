@@ -39,3 +39,4 @@ def get_suggested_prompts():
         "Quy trình kiểm định 150 điểm tại Atelier gồm những gì?",
         "Tôi muốn đặt lịch lái thử tại Khu đô thị Sala cuối tuần này"
     ]
+

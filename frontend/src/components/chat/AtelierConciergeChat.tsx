@@ -3,34 +3,34 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { 
-  Sparkles, 
-  X, 
-  Send, 
-  Car as CarIcon, 
-  RotateCcw, 
-  ChevronRight, 
-  ShieldCheck, 
-  Clock, 
+import {
+  Sparkles,
+  X,
+  Send,
+  Car as CarIcon,
+  RotateCcw,
+  ChevronRight,
+  ShieldCheck,
+  Clock,
   PhoneCall,
   CheckCircle2,
-  HelpCircle
+  HelpCircle,
 } from "lucide-react";
 import { chatApi, ChatMessage, SuggestedCarCard } from "@/lib/api";
 
 const INITIAL_GREETING: ChatMessage = {
   role: "model",
-  content: 
+  content:
     "Dạ em kính chào Quý khách! Em là **Atelier VIP Concierge** — Trợ lý tư vấn xe sang riêng tư tại showroom Atelier (Khu đô thị Sala, TP. Thủ Đức).\n\n" +
     "Em có thể hỗ trợ Quý khách tra cứu kho xe có sẵn, tư vấn phương án trả góp ngân hàng, giải đáp quy trình kiểm định 150 điểm hoặc đặt lịch lái thử tận nơi. Quý khách đang quan tâm đến dòng xe nào hôm nay ạ?",
-  suggested_cars: []
+  suggested_cars: [],
 };
 
 const DEFAULT_PROMPTS = [
   "Có mẫu SUV nào đang sẵn xe?",
   "Bảng tính trả góp xe 4 tỷ trong 5 năm",
   "Quy trình kiểm định 150 điểm gồm những gì?",
-  "Tôi muốn đặt lịch lái thử tại showroom Sala"
+  "Tôi muốn đặt lịch lái thử tại showroom Sala",
 ];
 
 export default function AtelierConciergeChat() {
@@ -38,7 +38,8 @@ export default function AtelierConciergeChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_GREETING]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>(DEFAULT_PROMPTS);
+  const [suggestedPrompts, setSuggestedPrompts] =
+    useState<string[]>(DEFAULT_PROMPTS);
   const [hasNewMessage, setHasNewMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +57,8 @@ export default function AtelierConciergeChat() {
 
   // Tải danh sách gợi ý từ backend
   useEffect(() => {
-    chatApi.getSuggestedPrompts()
+    chatApi
+      .getSuggestedPrompts()
       .then((prompts) => {
         if (prompts && prompts.length > 0) {
           setSuggestedPrompts(prompts);
@@ -77,7 +79,10 @@ export default function AtelierConciergeChat() {
     const userMsg: ChatMessage = {
       role: "user",
       content: text,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     const newMessages = [...messages, userMsg];
@@ -86,9 +91,9 @@ export default function AtelierConciergeChat() {
 
     try {
       // Chuẩn bị lịch sử hội thoại gửi lên backend
-      const historyPayload = newMessages.map(m => ({
+      const historyPayload = newMessages.map((m) => ({
         role: m.role,
-        content: m.content
+        content: m.content,
       }));
 
       const res = await chatApi.sendMessage(text, historyPayload);
@@ -98,20 +103,27 @@ export default function AtelierConciergeChat() {
         content: res.reply,
         suggested_cars: res.suggested_cars || [],
         action_taken: res.action_taken,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
 
-      setMessages(prev => [...prev, botMsg]);
+      setMessages((prev) => [...prev, botMsg]);
       if (!isOpen) {
         setHasNewMessage(true);
       }
     } catch (error) {
       const errorMsg: ChatMessage = {
         role: "model",
-        content: "Dạ em xin lỗi Quý khách, kết nối tư vấn hiện đang có chút gián đoạn. Quý khách vui lòng để lại số điện thoại hoặc gọi hotline **090 123 4567**, chuyên viên Atelier sẽ phục vụ Quý khách ngay ạ.",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        content:
+          "Dạ em xin lỗi Quý khách, kết nối tư vấn hiện đang có chút gián đoạn. Quý khách vui lòng để lại số điện thoại hoặc gọi hotline **090 123 4567**, chuyên viên Atelier sẽ phục vụ Quý khách ngay ạ.",
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
-      setMessages(prev => [...prev, errorMsg]);
+      setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
     }
@@ -127,7 +139,7 @@ export default function AtelierConciergeChat() {
     if (!price) return "Liên hệ Atelier";
     const ty = price / 1_000_000_000;
     if (ty >= 1) {
-      return `${ty.toFixed(2).replace(/\.00$/, '')} Tỷ VNĐ`;
+      return `${ty.toFixed(2).replace(/\.00$/, "")} Tỷ VNĐ`;
     }
     const trieu = price / 1_000_000;
     return `${Math.round(trieu)} Triệu VNĐ`;
@@ -138,8 +150,13 @@ export default function AtelierConciergeChat() {
     const lines = text.split("\n");
     return lines.map((line, lIdx) => {
       // Bullet point
-      const isBullet = line.trim().startsWith("* ") || line.trim().startsWith("• ") || line.trim().startsWith("- ");
-      const cleanLine = isBullet ? line.trim().replace(/^[\*\•\-]\s*/, "") : line;
+      const isBullet =
+        line.trim().startsWith("* ") ||
+        line.trim().startsWith("• ") ||
+        line.trim().startsWith("- ");
+      const cleanLine = isBullet
+        ? line.trim().replace(/^[\*\•\-]\s*/, "")
+        : line;
 
       // Parse bold **...**
       const parts = cleanLine.split(/(\*\*.*?\*\*)/g);
@@ -203,18 +220,24 @@ export default function AtelierConciergeChat() {
 
           <div className="relative flex items-center gap-2.5">
             <div className="relative flex items-center justify-center w-8 h-8 rounded-full bg-[#C5A880]/15 text-[#C5A880] border border-[#C5A880]/30 group-hover:bg-[#C5A880] group-hover:text-black transition-colors">
-              {isOpen ? <X className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+              {isOpen ? (
+                <X className="w-4 h-4" />
+              ) : (
+                <Sparkles className="w-4 h-4" />
+              )}
               {!isOpen && (
                 <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#0B0C0E] rounded-full" />
               )}
             </div>
-            
+
             <div className="flex flex-col text-left">
               <span className="text-xs font-semibold tracking-wider uppercase text-slate-200">
                 {isOpen ? "Đóng hộp thoại" : "Atelier Concierge"}
               </span>
               {!isOpen && (
-                <span className="text-[10px] text-[#C5A880]/80">Trực tuyến • Hỗ trợ 24/7</span>
+                <span className="text-[10px] text-[#C5A880]/80">
+                  Trực tuyến • Hỗ trợ 24/7
+                </span>
               )}
             </div>
           </div>
@@ -224,7 +247,6 @@ export default function AtelierConciergeChat() {
       {/* 2. CỬA SỔ HỘI THOẠI LUXURY CHAT MODAL */}
       {isOpen && (
         <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-[92vw] sm:w-[420px] h-[600px] max-h-[82vh] flex flex-col rounded-2xl bg-[#0F1014]/95 border border-[#C5A880]/40 shadow-[0_20px_50px_rgba(0,0,0,0.85)] backdrop-blur-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
-          
           {/* HEADER */}
           <div className="flex items-center justify-between px-4 py-3.5 bg-gradient-to-r from-[#171920] to-[#121318] border-b border-white/10">
             <div className="flex items-center gap-3">
@@ -234,7 +256,7 @@ export default function AtelierConciergeChat() {
                 </div>
                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[#0E1013]" />
               </div>
-              
+
               <div>
                 <div className="flex items-center gap-1.5">
                   <h3 className="text-xs font-bold tracking-widest uppercase text-white">
@@ -294,9 +316,12 @@ export default function AtelierConciergeChat() {
                     <div className="mt-2 max-w-[88%] bg-emerald-950/60 border border-emerald-500/40 rounded-xl p-3 flex items-start gap-2.5 text-emerald-200 text-xs">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-semibold text-emerald-300">Yêu cầu VIP đã được tiếp nhận</p>
+                        <p className="font-semibold text-emerald-300">
+                          Yêu cầu VIP đã được tiếp nhận
+                        </p>
                         <p className="text-[11px] text-emerald-200/80 mt-0.5">
-                          Hệ thống CRM Atelier đã chuyển thông tin tới Giám đốc chăm sóc khách hàng.
+                          Hệ thống CRM Atelier đã chuyển thông tin tới Giám đốc
+                          chăm sóc khách hàng.
                         </p>
                       </div>
                     </div>
@@ -307,7 +332,8 @@ export default function AtelierConciergeChat() {
                     <div className="mt-3 w-full space-y-2.5">
                       <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
                         <span className="flex items-center gap-1 text-[#C5A880] font-medium">
-                          <CarIcon className="w-3.5 h-3.5" /> Xe phù hợp trong kho ({msg.suggested_cars.length})
+                          <CarIcon className="w-3.5 h-3.5" /> Xe phù hợp trong
+                          kho ({msg.suggested_cars.length})
                         </span>
                         <span>Đã kiểm định 150 điểm</span>
                       </div>
@@ -373,11 +399,22 @@ export default function AtelierConciergeChat() {
               <div className="flex items-start gap-2">
                 <div className="bg-[#181B22] border border-white/10 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-2 text-slate-400 text-xs shadow-md">
                   <div className="flex gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-bounce" style={{ animationDelay: "300ms" }} />
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    />
                   </div>
-                  <span className="text-slate-400 text-[11px]">Atelier Concierge đang tra cứu kho xe...</span>
+                  <span className="text-slate-400 text-[11px]">
+                    Atelier Concierge đang tra cứu kho xe...
+                  </span>
                 </div>
               </div>
             )}
@@ -432,12 +469,12 @@ export default function AtelierConciergeChat() {
 
             <div className="flex items-center justify-between text-[10px] text-slate-500 mt-2 px-1">
               <span className="flex items-center gap-1">
-                <ShieldCheck className="w-3 h-3 text-[#C5A880]" /> Dữ liệu trực tiếp từ kho xe Atelier
+                <ShieldCheck className="w-3 h-3 text-[#C5A880]" /> Dữ liệu trực
+                tiếp từ kho xe Atelier
               </span>
               <span>Hotline VIP: 090 123 4567</span>
             </div>
           </div>
-
         </div>
       )}
     </>
